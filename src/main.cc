@@ -25,6 +25,10 @@
 #include "git_hash.hh"
 #include "git_vers.hh"
 
+#ifdef HAVE_CALIPER
+#include <caliper/cali.h>
+#endif
+
 void gameOver();
 void cycleInit( bool loadBalance );
 void cycleTracking(MonteCarlo* monteCarlo);
@@ -36,6 +40,9 @@ MonteCarlo *mcco  = NULL;
 
 int main(int argc, char** argv)
 {
+#ifdef HAVE_CALIPER
+   CALI_CXX_MARK_FUNCTION;
+#endif
    mpiInit(&argc, &argv);
    printBanner(GIT_VERS, GIT_HASH);
 
