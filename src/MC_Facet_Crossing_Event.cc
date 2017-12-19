@@ -1,4 +1,7 @@
 #include "MC_Facet_Crossing_Event.hh"
+#ifdef HAVE_CALIPER
+#include<caliper/cali.h>
+#endif
 #include "ParticleVaultContainer.hh"
 #include "ParticleVault.hh"
 #include "MC_Domain.hh"
@@ -24,6 +27,9 @@ HOST_DEVICE
 
 MC_Tally_Event::Enum MC_Facet_Crossing_Event(MC_Particle &mc_particle, MonteCarlo* monteCarlo, int particle_index, ParticleVault* processingVault)
 {
+#ifdef HAVE_CALIPER
+CALI_CXX_MARK_FUNCTION;
+#endif
     MC_Location location = mc_particle.Get_Location();
 
     Subfacet_Adjacency &facet_adjacency = MCT_Adjacent_Facet(location, mc_particle, monteCarlo);

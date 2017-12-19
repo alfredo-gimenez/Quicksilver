@@ -1,4 +1,7 @@
 #include "Tallies.hh"
+#ifdef HAVE_CALIPER
+#include<caliper/cali.h>
+#endif
 #include "utilsMpi.hh"
 #include "MC_Time_Info.hh"
 #include "MC_Processor_Info.hh"
@@ -11,10 +14,16 @@ using std::vector;
 
 void Tallies::CycleInitialize(MonteCarlo* monteCarlo)
 {
+#ifdef HAVE_CALIPER
+CALI_CXX_MARK_FUNCTION;
+#endif
 }
 
 void Tallies::SumTasks(void)
 {
+#ifdef HAVE_CALIPER
+CALI_CXX_MARK_FUNCTION;
+#endif
     for (int replication_index = 1; replication_index < _num_balance_replications; replication_index++)
     {
         _balanceTask[0].Add(_balanceTask[replication_index]);  // Add index 1 and greater to index 0
@@ -24,6 +33,9 @@ void Tallies::SumTasks(void)
 
 void Tallies::CycleFinalize(MonteCarlo *monteCarlo)
 {
+#ifdef HAVE_CALIPER
+CALI_CXX_MARK_FUNCTION;
+#endif
     SumTasks(); // sum the task level data down to index 0 at the end of each cycle
 
     vector<uint64_t> tal;
@@ -98,6 +110,9 @@ void Tallies::CycleFinalize(MonteCarlo *monteCarlo)
 
 void Fluence::compute( int domainIndex, ScalarFluxDomain &scalarFluxDomain )
 {
+#ifdef HAVE_CALIPER
+CALI_CXX_MARK_FUNCTION;
+#endif
     int numCells = scalarFluxDomain._task[0]._cell.size();
 
     while( this->_domain.size() <= domainIndex )
@@ -121,6 +136,9 @@ void Fluence::compute( int domainIndex, ScalarFluxDomain &scalarFluxDomain )
 
 void Tallies::PrintSummary(MonteCarlo *monteCarlo)
 {
+#ifdef HAVE_CALIPER
+CALI_CXX_MARK_FUNCTION;
+#endif
     MC_FASTTIMER_STOP(MC_Fast_Timer::cycleFinalize); // stop the finalize timer to get report
 
     if ( monteCarlo->time_info->cycle == 0 )
@@ -144,6 +162,9 @@ void Tallies::PrintSummary(MonteCarlo *monteCarlo)
 
 double Tallies::ScalarFluxSum(MonteCarlo *monteCarlo)
 {
+#ifdef HAVE_CALIPER
+CALI_CXX_MARK_FUNCTION;
+#endif
     double local_sum = 0.0;
 
     for (int domainIndex = 0; domainIndex < _scalarFluxDomain.size(); domainIndex++)
@@ -174,6 +195,9 @@ void Tallies::InitializeTallies( MonteCarlo *monteCarlo,
                                  int flux_replications = 1,
                                  int cell_replications = 1 )
 {
+#ifdef HAVE_CALIPER
+CALI_CXX_MARK_FUNCTION;
+#endif
 
     //Set num replications from input parameters
     _num_balance_replications   = balance_replications;

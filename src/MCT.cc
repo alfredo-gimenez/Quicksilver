@@ -1,4 +1,7 @@
 /// \file
+#ifdef HAVE_CALIPER
+#include<caliper/cali.h>
+#endif
 /// Functions to implement tracking of particles through the mesh
 
 #include "MCT.hh"
@@ -93,6 +96,9 @@ MC_Nearest_Facet MCT_Nearest_Facet(MC_Particle *mc_particle,
                                    bool new_segment,
                                    MonteCarlo* monteCarlo )
 {
+#ifdef HAVE_CALIPER
+CALI_CXX_MARK_FUNCTION;
+#endif
 //    #ifndef BCMN_HAVE_OPENMP
 //    MC_FASTTIMER_START(MC_Fast_Timer::Nearest_Facet);
 //    #endif
@@ -146,6 +152,9 @@ void MCT_Generate_Coordinate_3D_G(uint64_t *random_number_seed,
                                   MC_Vector &coordinate,
                                   MonteCarlo* monteCarlo )
 {
+#ifdef HAVE_CALIPER
+CALI_CXX_MARK_FUNCTION;
+#endif
     const MC_Domain &domain = monteCarlo->domain[domain_num];
 
     // Determine the cell-center nodal point coordinates.
@@ -231,6 +240,9 @@ HOST_DEVICE_CUDA
 MC_Vector MCT_Cell_Position_3D_G(const MC_Domain &domain,
                                  int cell_index)
 {
+#ifdef HAVE_CALIPER
+CALI_CXX_MARK_FUNCTION;
+#endif
     MC_Vector coordinate;
 
     int num_points = domain.mesh._cellConnectivity[cell_index].num_points;
@@ -265,6 +277,9 @@ namespace
                                int num_points_per_facet,                // input
                                int                *facet_points /* output */)
     {
+#ifdef HAVE_CALIPER
+CALI_CXX_MARK_FUNCTION;
+#endif
         // Determine the domain local points of the facet in the cell for the 2DG or 3DG mesh.
         for ( int point_index = 0; point_index < num_points_per_facet; point_index++ )
             facet_points[point_index] = domain.mesh._cellConnectivity[cell]._facet[facet].point[point_index];
@@ -287,6 +302,9 @@ namespace
                                                       const DirectionCosine *direction_cosine,
                                                       bool allow_enter)
     {
+#ifdef HAVE_CALIPER
+CALI_CXX_MARK_FUNCTION;
+#endif
         double boundingBox_tolerance = 1e-9;
         double numerator = -1.0*(A * coordinate.x +
                                  B * coordinate.y +
@@ -402,6 +420,9 @@ namespace
 HOST_DEVICE
 void MCT_Reflect_Particle(MonteCarlo *monteCarlo, MC_Particle &particle)
 {
+#ifdef HAVE_CALIPER
+CALI_CXX_MARK_FUNCTION;
+#endif
     DirectionCosine *direction_cosine = particle.Get_Direction_Cosine();
     MC_Location location = particle.Get_Location();
 
@@ -438,6 +459,9 @@ namespace
     MC_Nearest_Facet MCT_Nearest_Facet_Find_Nearest(int num_facets_per_cell,
                                                     MC_Distance_To_Facet *distance_to_facet)
     {
+#ifdef HAVE_CALIPER
+CALI_CXX_MARK_FUNCTION;
+#endif
         MC_Nearest_Facet nearest_facet;
 
         // largest negative distance (smallest magnitude, but negative)
@@ -496,6 +520,9 @@ namespace
                                                     MC_Distance_To_Facet *distance_to_facet,
                                                     int &retry /* output */ )
     {
+#ifdef HAVE_CALIPER
+CALI_CXX_MARK_FUNCTION;
+#endif
         MC_Nearest_Facet nearest_facet = MCT_Nearest_Facet_Find_Nearest(num_facets_per_cell, distance_to_facet);
 
         const int max_allowed_segments = 10000000;
@@ -556,6 +583,9 @@ namespace
         MC_Vector &coordinate,
         const DirectionCosine *direction_cosine)
     {
+#ifdef HAVE_CALIPER
+CALI_CXX_MARK_FUNCTION;
+#endif
         // int my_task_num = mc_particle == NULL ? 0 : mc_particle->task;
         MC_Vector *facet_coords[3];
         int iteration = 0;
@@ -637,6 +667,9 @@ namespace
                                               const MC_Vector &v2_,
                                               const MC_Vector &v3)
     {
+#ifdef HAVE_CALIPER
+CALI_CXX_MARK_FUNCTION;
+#endif
         MC_Vector v0(v0_), v1(v1_), v2(v2_);
 
         v0.x -= v3.x; v0.y -= v3.y; v0.z -= v3.z;
@@ -660,6 +693,9 @@ namespace
                                               MC_Vector &coordinate, // input/output: move this coordinate
                                               double move_factor)     // input: multiplication factor for move
     {
+#ifdef HAVE_CALIPER
+CALI_CXX_MARK_FUNCTION;
+#endif
         MC_Vector move_to = MCT_Cell_Position_3D_G(domain, location.cell);
 
         coordinate.x += move_factor * ( move_to.x - coordinate.x );

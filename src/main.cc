@@ -94,6 +94,9 @@ int main(int argc, char** argv)
 
 void gameOver()
 {
+#ifdef HAVE_CALIPER
+CALI_CXX_MARK_FUNCTION;
+#endif
     mcco->fast_timer->Cumulative_Report(mcco->processor_info->rank,
                                         mcco->processor_info-> num_processors,
                                         mcco->processor_info->comm_mc_world,
@@ -102,6 +105,9 @@ void gameOver()
 
 void cycleInit( bool loadBalance )
 {
+#ifdef HAVE_CALIPER
+CALI_CXX_MARK_FUNCTION;
+#endif
 
     MC_FASTTIMER_START(MC_Fast_Timer::cycleInit);
 
@@ -144,6 +150,9 @@ __global__ void CycleTrackingKernel( MonteCarlo* monteCarlo, int num_particles, 
 
 void cycleTracking(MonteCarlo *monteCarlo)
 {
+#ifdef HAVE_CALIPER
+CALI_CXX_MARK_FUNCTION;
+#endif
     MC_FASTTIMER_START(MC_Fast_Timer::cycleTracking);
 
     bool done = false;
@@ -311,6 +320,9 @@ void cycleTracking(MonteCarlo *monteCarlo)
 
 void cycleFinalize()
 {
+#ifdef HAVE_CALIPER
+CALI_CXX_MARK_FUNCTION;
+#endif
     MC_FASTTIMER_START(MC_Fast_Timer::cycleFinalize);
 
     mcco->_tallies->_balanceTask[0]._end = mcco->_particleVaultContainer->sizeProcessed();

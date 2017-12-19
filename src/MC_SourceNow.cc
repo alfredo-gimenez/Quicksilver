@@ -1,4 +1,7 @@
 #include "MC_SourceNow.hh"
+#ifdef HAVE_CALIPER
+#include<caliper/cali.h>
+#endif
 #include "QS_Vector.hh"
 #include <iostream>
 #include "utils.hh"
@@ -27,6 +30,9 @@ namespace
 
 void MC_SourceNow(MonteCarlo *monteCarlo)
 {
+#ifdef HAVE_CALIPER
+CALI_CXX_MARK_FUNCTION;
+#endif
     NVTX_Range range("MC_Source_Now");
 
     std::vector<double> source_rate(monteCarlo->_materialDatabase->_mat.size());  // Get this from user input
@@ -168,6 +174,9 @@ namespace
 {
     double Get_Speed_From_Energy(double energy)
     {
+#ifdef HAVE_CALIPER
+CALI_CXX_MARK_FUNCTION;
+#endif
         static const double rest_mass_energy = PhysicalConstants::_neutronRestMassEnergy;
         static const double speed_of_light  = PhysicalConstants::_speedOfLight;
 

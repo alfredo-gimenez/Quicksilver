@@ -1,4 +1,7 @@
 #include "MacroscopicCrossSection.hh"
+#ifdef HAVE_CALIPER
+#include<caliper/cali.h>
+#endif
 #include "MonteCarlo.hh"
 #include "MaterialDatabase.hh"
 #include "NuclearData.hh"
@@ -15,6 +18,9 @@ HOST_DEVICE
 double macroscopicCrossSection(MonteCarlo* monteCarlo, int reactionIndex, int domainIndex, int cellIndex,
                                int isoIndex, int energyGroup)
 {
+#ifdef HAVE_CALIPER
+CALI_CXX_MARK_FUNCTION;
+#endif
     // Initialize various data items.
     int globalMatIndex = monteCarlo->domain[domainIndex].cell_state[cellIndex]._material;
 
@@ -59,6 +65,9 @@ HOST_DEVICE
 double weightedMacroscopicCrossSection(MonteCarlo* monteCarlo, int taskIndex, int domainIndex,
                                        int cellIndex, int energyGroup)
 {
+#ifdef HAVE_CALIPER
+CALI_CXX_MARK_FUNCTION;
+#endif
     double* precomputedCrossSection =
         &monteCarlo->domain[domainIndex].cell_state[cellIndex]._total[energyGroup];
     qs_assert (precomputedCrossSection != NULL);

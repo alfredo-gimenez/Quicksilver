@@ -1,4 +1,7 @@
 /// \file
+#ifdef HAVE_CALIPER
+#include<caliper/cali.h>
+#endif
 /// Read parameters from command line arguments and input file.
 
 
@@ -79,6 +82,9 @@ namespace
 
 Parameters getParameters(int argc, char** argv)
 {
+#ifdef HAVE_CALIPER
+CALI_CXX_MARK_FUNCTION;
+#endif
     Parameters params;
     parseCommandLine(argc, argv, params);
     const string& filename = params.simulationParams.inputFile;
@@ -95,6 +101,9 @@ Parameters getParameters(int argc, char** argv)
 
 void printParameters(const Parameters& pp, ostream& out)
 {
+#ifdef HAVE_CALIPER
+CALI_CXX_MARK_FUNCTION;
+#endif
     int rank = -1;
     mpiComm_rank(MPI_COMM_WORLD, &rank);
 
@@ -116,6 +125,9 @@ void printParameters(const Parameters& pp, ostream& out)
 
 ostream& operator<<(ostream& out, const SimulationParameters& pp)
 {
+#ifdef HAVE_CALIPER
+CALI_CXX_MARK_FUNCTION;
+#endif
     out << "Simulation:\n";
     out << "   dt: " << pp.dt << "\n";
     out << "   fMax: " << pp.fMax << "\n";
@@ -153,6 +165,9 @@ ostream& operator<<(ostream& out, const SimulationParameters& pp)
 
 ostream& operator<<(ostream& out, const GeometryParameters& pp)
 {
+#ifdef HAVE_CALIPER
+CALI_CXX_MARK_FUNCTION;
+#endif
     out << "Geometry:\n";
     out << "   material: " << pp.materialName << "\n";
     switch (pp.shape)
@@ -181,6 +196,9 @@ ostream& operator<<(ostream& out, const GeometryParameters& pp)
 
 ostream& operator<<(ostream& out, const MaterialParameters& pp)
 {
+#ifdef HAVE_CALIPER
+CALI_CXX_MARK_FUNCTION;
+#endif
     out << "Material:\n";
     out << "   name: " << pp.name << "\n";
     out << "   mass: " << pp.mass << "\n";
@@ -200,6 +218,9 @@ ostream& operator<<(ostream& out, const MaterialParameters& pp)
 
 ostream& operator<<(ostream& out, const CrossSectionParameters& pp)
 {
+#ifdef HAVE_CALIPER
+CALI_CXX_MARK_FUNCTION;
+#endif
     out << "CrossSection:\n";
     out << "   name: " << pp.name << "\n";
     out << "   A: " << pp.aa << "\n";
@@ -216,6 +237,9 @@ namespace
 {
     void parseCommandLine(int argc, char** argv, Parameters& pp)
     {
+#ifdef HAVE_CALIPER
+CALI_CXX_MARK_FUNCTION;
+#endif
         SimulationParameters& sp = pp.simulationParams;
         int help=0;
         char name[1024];
@@ -273,6 +297,9 @@ namespace
 {
     void parseInputFile(const string& filename, Parameters& pp)
     {
+#ifdef HAVE_CALIPER
+CALI_CXX_MARK_FUNCTION;
+#endif
         vector<InputBlock> parseTree;
         int myRank;
         mpiComm_rank(MPI_COMM_WORLD, &myRank);
@@ -343,6 +370,9 @@ namespace
     // for a complete set of geometries, materials, and cross sections.
     void supplyDefaults(Parameters& params)
     {
+#ifdef HAVE_CALIPER
+CALI_CXX_MARK_FUNCTION;
+#endif
         if ( ! params.geometryParams.empty() )
             return;
 
@@ -377,6 +407,9 @@ namespace
 {
     void scanSimulationBlock(const InputBlock& input, Parameters& pp)
     {
+#ifdef HAVE_CALIPER
+CALI_CXX_MARK_FUNCTION;
+#endif
         SimulationParameters& sp = pp.simulationParams;
         input.getValue<string>("crossSectionsOut",sp.crossSectionsOut);
         input.getValue<string>("boundaryCondition", sp.boundaryCondition);
@@ -415,6 +448,9 @@ namespace
 {
     void scanGeometryBlock(const InputBlock& input, Parameters& pp)
     {
+#ifdef HAVE_CALIPER
+CALI_CXX_MARK_FUNCTION;
+#endif
         pp.geometryParams.push_back(GeometryParameters());
         GeometryParameters& gg = pp.geometryParams.back();
         input.getValue<string>("material", gg.materialName);
@@ -446,6 +482,9 @@ namespace
 {
     void scanMaterialBlock(const InputBlock& input, Parameters& pp)
     {
+#ifdef HAVE_CALIPER
+CALI_CXX_MARK_FUNCTION;
+#endif
         string materialName;
         input.getValue<string>("name", materialName);
         if (materialName.empty())
@@ -469,6 +508,9 @@ namespace
 {
     void scanCrossSectionBlock(const InputBlock& input, Parameters& pp)
     {
+#ifdef HAVE_CALIPER
+CALI_CXX_MARK_FUNCTION;
+#endif
         string crossSectionName;
         input.getValue<string>("name", crossSectionName);
         if (crossSectionName.empty())
@@ -488,20 +530,32 @@ namespace
 namespace
 {
     void badInputFile(const string& filename){
+#ifdef HAVE_CALIPER
+CALI_CXX_MARK_FUNCTION;
+#endif
         qs_assert(false);
     }
     void badGeometryBlock(const InputBlock& input)
     {
+#ifdef HAVE_CALIPER
+CALI_CXX_MARK_FUNCTION;
+#endif
         // didn't specify shape.
         // Must be brick or sphere
         qs_assert(false);
     }
     void badMaterialBlock(const InputBlock& input)
     {
+#ifdef HAVE_CALIPER
+CALI_CXX_MARK_FUNCTION;
+#endif
         // didn't specify a name
         qs_assert(false);
     }
     void badCrossSectionBlock(const InputBlock& input){
+#ifdef HAVE_CALIPER
+CALI_CXX_MARK_FUNCTION;
+#endif
         qs_assert(false);
     }
 }

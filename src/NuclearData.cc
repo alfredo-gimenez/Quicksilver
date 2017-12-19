@@ -1,4 +1,7 @@
 #include "NuclearData.hh"
+#ifdef HAVE_CALIPER
+#include<caliper/cali.h>
+#endif
 #include <cmath>
 #include "MC_RNG_State.hh"
 #include "DeclareMacro.hh"
@@ -16,6 +19,9 @@ NuclearDataReaction::NuclearDataReaction(
     _reactionType(reactionType),
     _nuBar(nuBar)
 {
+#ifdef HAVE_CALIPER
+CALI_CXX_MARK_FUNCTION;
+#endif
     int nGroups = _crossSection.size();
 
     for (int ii=0; ii<nGroups; ++ii)
@@ -55,6 +61,9 @@ void NuclearDataReaction::sampleCollision(
     double incidentEnergy, double material_mass, double* energyOut,
     double* angleOut, int &nOut, uint64_t* seed, int max_production_size)
 {
+#ifdef HAVE_CALIPER
+CALI_CXX_MARK_FUNCTION;
+#endif
     double randomNumber;
     switch(_reactionType)
     {
@@ -94,6 +103,9 @@ void NuclearDataSpecies::addReaction(
     NuclearDataReaction::Enum type, double nuBar,
     qs_vector<double> &energies, const Polynomial& polynomial, double reactionCrossSection)
 {
+#ifdef HAVE_CALIPER
+CALI_CXX_MARK_FUNCTION;
+#endif
     _reactions.Open();
     _reactions.push_back(NuclearDataReaction(type, nuBar, energies, polynomial, reactionCrossSection));
     _reactions.Close();
@@ -104,6 +116,9 @@ void NuclearDataSpecies::addReaction(
 // Set up the energies boundaries of the neutron
 NuclearData::NuclearData(int numGroups, double energyLow, double energyHigh) : _energies( numGroups+1,VAR_MEM)
 {
+#ifdef HAVE_CALIPER
+CALI_CXX_MARK_FUNCTION;
+#endif
     qs_assert (energyLow < energyHigh);
     _numEnergyGroups = numGroups;
     _energies[0] = energyLow;
@@ -128,6 +143,9 @@ int NuclearData::addIsotope(
     double totalCrossSection,
     double fissionWeight, double scatterWeight, double absorptionWeight)
 {
+#ifdef HAVE_CALIPER
+CALI_CXX_MARK_FUNCTION;
+#endif
     _isotopes.Open();
     _isotopes.push_back(NuclearDataIsotope());
     _isotopes.Close();
@@ -191,6 +209,9 @@ HOST_DEVICE
 // Return the cross section for this energy group
 double NuclearDataReaction::getCrossSection(unsigned int group)
 {
+#ifdef HAVE_CALIPER
+CALI_CXX_MARK_FUNCTION;
+#endif
     qs_assert(group < _crossSection.size());
     return _crossSection[group];
 }
@@ -199,6 +220,9 @@ HOST_DEVICE_END
 HOST_DEVICE
 int NuclearData::getNumberReactions(unsigned int isotopeIndex)
 {
+#ifdef HAVE_CALIPER
+CALI_CXX_MARK_FUNCTION;
+#endif
     qs_assert(isotopeIndex < _isotopes.size());
     return (int)_isotopes[isotopeIndex]._species[0]._reactions.size();
 }
@@ -208,6 +232,9 @@ HOST_DEVICE_END
 HOST_DEVICE
 int NuclearData::getEnergyGroup(double energy)
 {
+#ifdef HAVE_CALIPER
+CALI_CXX_MARK_FUNCTION;
+#endif
     int numEnergies = (int)_energies.size();
     if (energy <= _energies[0]) return 0;
     if (energy > _energies[numEnergies-1]) return numEnergies-1;
@@ -233,6 +260,9 @@ HOST_DEVICE_END
 HOST_DEVICE
 double NuclearData::getTotalCrossSection(unsigned int isotopeIndex, unsigned int group)
 {
+#ifdef HAVE_CALIPER
+CALI_CXX_MARK_FUNCTION;
+#endif
     qs_assert(isotopeIndex < _isotopes.size());
     int numReacts = (int)_isotopes[isotopeIndex]._species[0]._reactions.size();
     double totalCrossSection = 0.0;
@@ -249,6 +279,9 @@ HOST_DEVICE
 double NuclearData::getReactionCrossSection(
     unsigned int reactIndex, unsigned int isotopeIndex, unsigned int group)
 {
+#ifdef HAVE_CALIPER
+CALI_CXX_MARK_FUNCTION;
+#endif
     qs_assert(isotopeIndex < _isotopes.size());
     qs_assert(reactIndex < _isotopes[isotopeIndex]._species[0]._reactions.size());
     return _isotopes[isotopeIndex]._species[0]._reactions[reactIndex].getCrossSection(group);

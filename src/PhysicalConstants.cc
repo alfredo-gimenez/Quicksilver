@@ -1,4 +1,7 @@
 #include "PhysicalConstants.hh"
+#ifdef HAVE_CALIPER
+#include<caliper/cali.h>
+#endif
 
 // The values of all physical constants are taken from:
 // 2006 CODATA which is located on the web at

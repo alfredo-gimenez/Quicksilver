@@ -1,4 +1,7 @@
 #include "initMC.hh"
+#ifdef HAVE_CALIPER
+#include<caliper/cali.h>
+#endif
 #include <vector>
 #include <set>
 #include <map>
@@ -51,6 +54,9 @@ namespace
 
 MonteCarlo* initMC(const Parameters& params)
 {
+#ifdef HAVE_CALIPER
+CALI_CXX_MARK_FUNCTION;
+#endif
     MonteCarlo* monteCarlo;
    #ifdef HAVE_UVM
     void* ptr;
@@ -77,6 +83,9 @@ namespace
 //Init GPU usage information
     void initGPUInfo( MonteCarlo* monteCarlo)
     {
+#ifdef HAVE_CALIPER
+CALI_CXX_MARK_FUNCTION;
+#endif
 //    int cpuID = sched_getcpu();
         int cpuID = 0;
 
@@ -136,6 +145,9 @@ namespace
 {
     void initNuclearData(MonteCarlo* monteCarlo, const Parameters& params)
     {
+#ifdef HAVE_CALIPER
+CALI_CXX_MARK_FUNCTION;
+#endif
       #if defined HAVE_UVM
         void *ptr1, *ptr2;
         cudaMallocManaged( &ptr1, sizeof(NuclearData), cudaMemAttachGlobal );
@@ -208,6 +220,9 @@ namespace
 {
     void consistencyCheck(int myRank, const qs_vector<MC_Domain>& domain)
     {
+#ifdef HAVE_CALIPER
+CALI_CXX_MARK_FUNCTION;
+#endif
         if (myRank == 0) { cout << "Starting Consistency Check" <<endl; }
         unsigned nDomains = domain.size();
         for (int iDomain=0; iDomain<nDomains; ++iDomain)
@@ -246,6 +261,9 @@ namespace
 {
     void initMesh(MonteCarlo* monteCarlo, const Parameters& params)
     {
+#ifdef HAVE_CALIPER
+CALI_CXX_MARK_FUNCTION;
+#endif
         int nx = params.simulationParams.nx;
         int ny = params.simulationParams.ny;
         int nz = params.simulationParams.nz;
@@ -331,6 +349,9 @@ namespace
 {
     void initTallies(MonteCarlo* monteCarlo, const Parameters& params)
     {
+#ifdef HAVE_CALIPER
+CALI_CXX_MARK_FUNCTION;
+#endif
         monteCarlo->_tallies->InitializeTallies(
             monteCarlo,
             params.simulationParams.balanceTallyReplications,
@@ -344,6 +365,9 @@ namespace
 {
     void initTimeInfo(MonteCarlo* monteCarlo, const Parameters& params)
     {
+#ifdef HAVE_CALIPER
+CALI_CXX_MARK_FUNCTION;
+#endif
         monteCarlo->time_info->time_step = params.simulationParams.dt;
     }
 }
@@ -355,6 +379,9 @@ namespace
                                    const GlobalFccGrid& grid,
                                    vector<MC_Vector>& centers)
     {
+#ifdef HAVE_CALIPER
+CALI_CXX_MARK_FUNCTION;
+#endif
         set<Tuple> picked;
         do
         {
@@ -379,6 +406,9 @@ namespace
                                int xDom, int yDom, int zDom,
                                vector<MC_Vector>& centers)
     {
+#ifdef HAVE_CALIPER
+CALI_CXX_MARK_FUNCTION;
+#endif
         double dx = lx/xDom;
         double dy = ly/yDom;
         double dz = lz/zDom;
@@ -398,11 +428,17 @@ namespace
     // if you want to get plot data for the cross sections.
     void checkCrossSections(MonteCarlo* monteCarlo, const Parameters& params)
     {
+#ifdef HAVE_CALIPER
+CALI_CXX_MARK_FUNCTION;
+#endif
         if( monteCarlo->_params.simulationParams.crossSectionsOut == "" ) return;
 
         struct XC_Data
         {
             XC_Data() : absorption(0.), fission(0.), scatter(0.){
+#ifdef HAVE_CALIPER
+CALI_CXX_MARK_FUNCTION;
+#endif
             }
             double absorption;
             double fission;
