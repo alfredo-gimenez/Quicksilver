@@ -50,7 +50,7 @@ MC_Tally_Event::Enum MC_Facet_Crossing_Event(MC_Particle &mc_particle, MonteCarl
     {
         // The particle will enter into an adjacent cell on a spatial neighbor.
         // The neighboring domain is on another processor. Set domain local domain on neighbor proc
-        
+
         mc_particle.domain     = facet_adjacency.adjacent.domain;
         mc_particle.cell       = facet_adjacency.adjacent.cell;
         mc_particle.facet      = facet_adjacency.adjacent.facet;

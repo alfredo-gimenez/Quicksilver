@@ -41,42 +41,42 @@ MonteCarlo *mcco  = NULL;
 int main(int argc, char** argv)
 {
 #ifdef HAVE_CALIPER
-   CALI_CXX_MARK_FUNCTION;
+    CALI_CXX_MARK_FUNCTION;
 #endif
-   mpiInit(&argc, &argv);
-   printBanner(GIT_VERS, GIT_HASH);
+    mpiInit(&argc, &argv);
+    printBanner(GIT_VERS, GIT_HASH);
 
-   Parameters params = getParameters(argc, argv);
-   printParameters(params, cout);
+    Parameters params = getParameters(argc, argv);
+    printParameters(params, cout);
 
-   // mcco stores just about everything. 
-   mcco = initMC(params); 
+    // mcco stores just about everything.
+    mcco = initMC(params);
 
-   int loadBalance = params.simulationParams.loadBalance;
+    int loadBalance = params.simulationParams.loadBalance;
 
-   MC_FASTTIMER_START(MC_Fast_Timer::main);     // this can be done once mcco exist.
+    MC_FASTTIMER_START(MC_Fast_Timer::main);    // this can be done once mcco exist.
 
-   const int nSteps = params.simulationParams.nSteps;
+    const int nSteps = params.simulationParams.nSteps;
 
-   for (int ii=0; ii<nSteps; ++ii)
-   {
-      cycleInit( bool(loadBalance) );
-      cycleTracking(mcco);
-      cycleFinalize();
+    for (int ii=0; ii<nSteps; ++ii)
+    {
+        cycleInit( bool(loadBalance) );
+        cycleTracking(mcco);
+        cycleFinalize();
 
-      if (params.simulationParams.cycleTimers == 1)
-      {
-         mcco->fast_timer->Last_Cycle_Report(
-            mcco->processor_info->rank,
-            mcco->processor_info->num_processors,
-            mcco->processor_info->comm_mc_world );
-      }
-   }
+        if (params.simulationParams.cycleTimers == 1)
+        {
+            mcco->fast_timer->Last_Cycle_Report(
+                mcco->processor_info->rank,
+                mcco->processor_info->num_processors,
+                mcco->processor_info->comm_mc_world );
+        }
+    }
 
 
-   MC_FASTTIMER_STOP(MC_Fast_Timer::main);
+    MC_FASTTIMER_STOP(MC_Fast_Timer::main);
 
-   gameOver();
+    gameOver();
 
     coralBenchmarkCorrectness(mcco, params);
 
@@ -84,12 +84,12 @@ int main(int argc, char** argv)
     mcco->~MonteCarlo();
     cudaFree( mcco );
 #else
-   delete mcco;
+    delete mcco;
 #endif
 
-   mpiFinalize();
-   
-   return 0;
+    mpiFinalize();
+
+    return 0;
 }
 
 void gameOver()
@@ -106,7 +106,7 @@ void cycleInit( bool loadBalance )
     MC_FASTTIMER_START(MC_Fast_Timer::cycleInit);
 
     mcco->clearCrossSectionCache();
-       
+
     mcco->_tallies->CycleInitialize(mcco);
 
     mcco->_particleVaultContainer->swapProcessingProcessedVaults();
@@ -119,7 +119,7 @@ void cycleInit( bool loadBalance )
     mcco->particle_buffer->Initialize();
 
     MC_SourceNow(mcco);
-   
+
     PopulationControl(mcco, loadBalance); // controls particle population
 
     RouletteLowWeightParticles(mcco); // Delete particles with low statistical weight
@@ -132,7 +132,7 @@ void cycleInit( bool loadBalance )
 
 __global__ void CycleTrackingKernel( MonteCarlo* monteCarlo, int num_particles, ParticleVault* processingVault, ParticleVault* processedVault )
 {
-   int global_index = getGlobalThreadID(); 
+    int global_index = getGlobalThreadID();
 
     if( global_index < num_particles )
     {
@@ -175,9 +175,9 @@ void cycleTracking(MonteCarlo *monteCarlo)
 
                 ParticleVault *processingVault = my_particle_vault.getTaskProcessingVault(processing_vault);
                 ParticleVault *processedVault =  my_particle_vault.getTaskProcessedVault(processed_vault);
-            
+
                 int numParticles = processingVault->size();
-            
+
                 if ( numParticles != 0 )
                 {
                     NVTX_Range trackingKernel("cycleTracking_TrackingKernel"); // range ends at end of scope
@@ -189,68 +189,68 @@ void cycleTracking(MonteCarlo *monteCarlo)
                     // * AS a single thread on the CPU.
                     switch (execPolicy)
                     {
-                      case gpuWithCUDA:
-                       {
+                        case gpuWithCUDA :
+                        {
                           #if defined (HAVE_CUDA)
-                          dim3 grid(1,1,1);
-                          dim3 block(1,1,1);
-                          int runKernel = ThreadBlockLayout( grid, block, numParticles);
-                          
-                          //Call Cycle Tracking Kernel
-                          if( runKernel )
-                             CycleTrackingKernel<<<grid, block >>>( monteCarlo, numParticles, processingVault, processedVault );
-                          
-                          //Synchronize the stream so that memory is copied back before we begin MPI section
-                          cudaPeekAtLastError();
-                          cudaDeviceSynchronize();
+                            dim3 grid(1,1,1);
+                            dim3 block(1,1,1);
+                            int runKernel = ThreadBlockLayout( grid, block, numParticles);
+
+                            //Call Cycle Tracking Kernel
+                            if( runKernel )
+                                CycleTrackingKernel<<<grid, block >>>( monteCarlo, numParticles, processingVault, processedVault );
+
+                            //Synchronize the stream so that memory is copied back before we begin MPI section
+                            cudaPeekAtLastError();
+                            cudaDeviceSynchronize();
                           #endif
-                       }
-                       break;
-                       
-                      case gpuWithOpenMP:
-                       {
-                          int nthreads=128;
-                          if (numParticles <  64*56 ) 
-                             nthreads = 64;
-                          int nteams = (numParticles + nthreads - 1 ) / nthreads;
-                          nteams = nteams > 1 ? nteams : 1;
+                        }
+                        break;
+
+                        case gpuWithOpenMP :
+                        {
+                            int nthreads=128;
+                            if (numParticles <  64*56 )
+                                nthreads = 64;
+                            int nteams = (numParticles + nthreads - 1 ) / nthreads;
+                            nteams = nteams > 1 ? nteams : 1;
                           #ifdef HAVE_OPENMP_TARGET
-                          #pragma omp target enter data map(to:monteCarlo[0:1]) 
-                          #pragma omp target enter data map(to:processingVault[0:1]) 
+                          #pragma omp target enter data map(to:monteCarlo[0:1])
+                          #pragma omp target enter data map(to:processingVault[0:1])
                           #pragma omp target enter data map(to:processedVault[0:1])
                           #pragma omp target teams distribute parallel for num_teams(nteams) thread_limit(128)
                           #endif
-                          for ( int particle_index = 0; particle_index < numParticles; particle_index++ )
-                          {
-                             CycleTrackingGuts( monteCarlo, particle_index, processingVault, processedVault );
-                          }
+                            for ( int particle_index = 0; particle_index < numParticles; particle_index++ )
+                            {
+                                CycleTrackingGuts( monteCarlo, particle_index, processingVault, processedVault );
+                            }
                           #ifdef HAVE_OPENMP_TARGET
                           #pragma omp target exit data map(from:monteCarlo[0:1])
                           #pragma omp target exit data map(from:processingVault[0:1])
                           #pragma omp target exit data map(from:processedVault[0:1])
                           #endif
-                       }
-                       break;
+                        }
+                        break;
 
-                      case cpu:
+                        case cpu :
                        #include "mc_omp_parallel_for_schedule_static.hh"
-                       for ( int particle_index = 0; particle_index < numParticles; particle_index++ )
-                       {
-                          CycleTrackingGuts( monteCarlo, particle_index, processingVault, processedVault );
-                       }
-                       break;
-                      default:
-                       qs_assert(false);
+                            for ( int particle_index = 0; particle_index < numParticles; particle_index++ )
+                            {
+                                CycleTrackingGuts( monteCarlo, particle_index, processingVault, processedVault );
+                            }
+                            break;
+                        default :
+                            qs_assert(false);
                     } // end switch
                 }
 
                 particle_count += numParticles;
-                
-                
+
+
                 // Next, communicate particles that have crossed onto
                 // other MPI ranks.
                 NVTX_Range cleanAndComm("cycleTracking_clean_and_comm");
-                
+
                 SendQueue &sendQueue = *(my_particle_vault.getSendQueue());
                 monteCarlo->particle_buffer->Allocate_Send_Buffer( sendQueue );
 
@@ -305,7 +305,7 @@ void cycleTracking(MonteCarlo *monteCarlo)
     //Make sure Buffers Memory is Free
     monteCarlo->particle_buffer->Free_Buffers();
 
-   MC_FASTTIMER_STOP(MC_Fast_Timer::cycleTracking);
+    MC_FASTTIMER_STOP(MC_Fast_Timer::cycleTracking);
 }
 
 
@@ -316,7 +316,7 @@ void cycleFinalize()
     mcco->_tallies->_balanceTask[0]._end = mcco->_particleVaultContainer->sizeProcessed();
 
     // Update the cumulative tally data.
-    mcco->_tallies->CycleFinalize(mcco); 
+    mcco->_tallies->CycleFinalize(mcco);
 
     mcco->time_info->cycle++;
 

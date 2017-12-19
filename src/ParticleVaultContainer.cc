@@ -6,43 +6,43 @@
 
 //--------------------------------------------------------------
 //------------ParticleVaultContainer Constructor----------------
-//Sets up the fixed sized data and pre-allocates the minimum 
+//Sets up the fixed sized data and pre-allocates the minimum
 //needed for processing and processed vaults
 //--------------------------------------------------------------
 
 ParticleVaultContainer::
-ParticleVaultContainer( uint64_t vault_size, 
-                        uint64_t num_vaults, 
+ParticleVaultContainer( uint64_t vault_size,
+                        uint64_t num_vaults,
                         uint64_t num_extra_vaults )
-: _vaultSize      ( vault_size       ),
-  _numExtraVaults ( num_extra_vaults ),
-  _extraVaultIndex( 0                ),
-  _processingVault( num_vaults       ),
-  _processedVault ( num_vaults       ),
-  _extraVault     ( num_extra_vaults, VAR_MEM )
+    : _vaultSize      ( vault_size       ),
+    _numExtraVaults ( num_extra_vaults ),
+    _extraVaultIndex( 0                ),
+    _processingVault( num_vaults       ),
+    _processedVault ( num_vaults       ),
+    _extraVault     ( num_extra_vaults, VAR_MEM )
 {
 
     //Allocate and reserve space for particles for each vault
     for( uint64_t vault = 0; vault < num_vaults; vault++ )
     {
         //Allocate Processing Vault
-        _processingVault[vault] = 
+        _processingVault[vault] =
             MemoryControl::allocate<ParticleVault>(1 ,VAR_MEM);
         _processingVault[vault]->reserve( vault_size );
 
         //Allocate Processed Vault
-        _processedVault[vault]  = 
+        _processedVault[vault]  =
             MemoryControl::allocate<ParticleVault>(1 ,VAR_MEM);
         _processedVault[vault]->reserve( vault_size );
     }
 
     //Allocate and reserve space for particles for each extra vault
-    for( uint64_t e_vault = 0; 
-                  e_vault < num_extra_vaults; 
-                  e_vault++ )
+    for( uint64_t e_vault = 0;
+         e_vault < num_extra_vaults;
+         e_vault++ )
     {
         //Allocate Extra Vault
-        _extraVault[e_vault] = 
+        _extraVault[e_vault] =
             MemoryControl::allocate<ParticleVault>(1 ,VAR_MEM);
         _extraVault[e_vault]->reserve( vault_size );
     }
@@ -85,7 +85,7 @@ getTaskProcessingVault(uint64_t vaultIndex)
 {
 //   qs_assert(vaultIndex >= 0);
 //   qs_assert(vaultIndex < _processingVault.size());
-   return _processingVault[vaultIndex];
+    return _processingVault[vaultIndex];
 }
 
 //--------------------------------------------------------------
@@ -99,12 +99,12 @@ getTaskProcessedVault(uint64_t vaultIndex)
 {
 //   qs_assert(vaultIndex >= 0);
 //   qs_assert(vaultIndex < _processedVault.size());
-   return _processedVault[vaultIndex];
+    return _processedVault[vaultIndex];
 }
 
 //--------------------------------------------------------------
 //------------getFirstEmptyProcessedVault-----------------------
-//Returns a pointer to the first empty Particle Vault in the 
+//Returns a pointer to the first empty Particle Vault in the
 //processed list
 //--------------------------------------------------------------
 
@@ -197,7 +197,7 @@ sizeExtra()
 void ParticleVaultContainer::
 collapseProcessing()
 {
-    uint64_t size_processing = this->sizeProcessing(); 
+    uint64_t size_processing = this->sizeProcessing();
 
     uint64_t num_vaults = this->_processingVault.size();
 
@@ -231,11 +231,11 @@ collapseProcessing()
 //Collapses the particles in the processed vault down to the
 //first vaults needed to hold that number of particles
 //--------------------------------------------------------------
-    
+
 void ParticleVaultContainer::
 collapseProcessed()
 {
-    uint64_t size_processed = this->sizeProcessed(); 
+    uint64_t size_processed = this->sizeProcessed();
 
     uint64_t num_vaults = this->_processedVault.size();
 
@@ -270,7 +270,7 @@ collapseProcessed()
 //with empty vaults from processing to prepair for the next
 //cycle
 //
-//ASSUMPTIONS:: 
+//ASSUMPTIONS::
 //  2) _processingVault is always empty of particles when this is
 //      called
 //--------------------------------------------------------------
@@ -324,9 +324,9 @@ addProcessingParticle( MC_Base_Particle &particle, uint64_t &fill_vault_index )
         fill_vault_index++;
         if( !(fill_vault_index < _processingVault.size()) )
         {
-           ParticleVault* vault = MemoryControl::allocate<ParticleVault>(1,VAR_MEM);
-           vault->reserve( this->_vaultSize );
-           _processingVault.push_back(vault);
+            ParticleVault* vault = MemoryControl::allocate<ParticleVault>(1,VAR_MEM);
+            vault->reserve( this->_vaultSize );
+            _processingVault.push_back(vault);
         }
         space = ( _processingVault[fill_vault_index]->size() < this->_vaultSize );
     }
@@ -342,7 +342,7 @@ void ParticleVaultContainer::
 addExtraParticle( MC_Particle &particle)
 {
     uint64_cu index = 0;
-    ATOMIC_CAPTURE( this->_extraVaultIndex, 1, index ); 
+    ATOMIC_CAPTURE( this->_extraVaultIndex, 1, index );
     uint64_t vault = index / this->_vaultSize;
     _extraVault[vault]->pushParticle( particle );
 }
@@ -350,7 +350,7 @@ HOST_DEVICE_END
 
 //--------------------------------------------------------------
 //------------cleanExtraVaults----------------------------------
-//Moves the particles from the _extraVault into the 
+//Moves the particles from the _extraVault into the
 //_processedVault
 //--------------------------------------------------------------
 

@@ -2,11 +2,13 @@
 #include "QS_Vector.hh"
 
 SendQueue::SendQueue()
-{}
+{
+}
 
 SendQueue::SendQueue( size_t size )
-: _data( size, VAR_MEM )
-{}
+    : _data( size, VAR_MEM )
+{
+}
 
 
 // -----------------------------------------------------------------------
@@ -15,17 +17,17 @@ size()
 {
     return _data.size();
 }
- 
+
 // -----------------------------------------------------------------------
 size_t SendQueue::
 neighbor_size( int neighbor_ )
 {
     size_t sum_n=0;
     for( size_t i = 0; i < _data.size(); i++ )
-    {   
+    {
         if( neighbor_ == _data[i]._neighbor )
             sum_n++;
-    }   
+    }
     return sum_n;
 }
 

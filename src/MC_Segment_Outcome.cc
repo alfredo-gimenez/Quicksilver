@@ -17,7 +17,7 @@
 
 HOST_DEVICE
 static inline unsigned int MC_Find_Min(const double *array,
-                                       int     num_elements);
+                                       int num_elements);
 HOST_DEVICE_END
 
 //--------------------------------------------------------------------------------------------------
@@ -27,7 +27,7 @@ HOST_DEVICE_END
 //  (iii) census at the end of the time step.
 //--------------------------------------------------------------------------------------------------
 
-HOST_DEVICE 
+HOST_DEVICE
 MC_Segment_Outcome_type::Enum MC_Segment_Outcome(MonteCarlo* monteCarlo, MC_Particle &mc_particle, unsigned int &flux_tally_index)
 {
     // initialize distances to large number
@@ -51,7 +51,7 @@ MC_Segment_Outcome_type::Enum MC_Segment_Outcome(MonteCarlo* monteCarlo, MC_Part
  #else
             std::string output_string;
             MC_Warning( "Forced Collision: num_mean_free_paths < 0 \n"
-                             "Particle record:\n%s", output_string.c_str());
+                        "Particle record:\n%s", output_string.c_str());
 #endif
         }
 
@@ -61,7 +61,7 @@ MC_Segment_Outcome_type::Enum MC_Segment_Outcome(MonteCarlo* monteCarlo, MC_Part
     // Randomly determine the distance to the next collision
     // based upon the composition of the current cell.
     double macroscopic_total_cross_section = weightedMacroscopicCrossSection(monteCarlo, 0,
-                             mc_particle.domain, mc_particle.cell, mc_particle.energy_group);
+                                                                             mc_particle.domain, mc_particle.cell, mc_particle.energy_group);
 
     // Cache the cross section
     mc_particle.totalCrossSection = macroscopic_total_cross_section;
@@ -113,8 +113,8 @@ MC_Segment_Outcome_type::Enum MC_Segment_Outcome(MonteCarlo* monteCarlo, MC_Part
 
     // Calculate the minimum distance to each facet of the cell.
     MC_Nearest_Facet nearest_facet;
-        nearest_facet = MCT_Nearest_Facet(&mc_particle, location, mc_particle.coordinate,
-                                  direction_cosine, distance_threshold, current_best_distance, new_segment, monteCarlo);
+    nearest_facet = MCT_Nearest_Facet(&mc_particle, location, mc_particle.coordinate,
+                                      direction_cosine, distance_threshold, current_best_distance, new_segment, monteCarlo);
 
     mc_particle.normal_dot = nearest_facet.dot_product;
 
@@ -219,7 +219,7 @@ MC_Segment_Outcome_type::Enum MC_Segment_Outcome(MonteCarlo* monteCarlo, MC_Part
 
     // Accumulate the particle's contribution to the scalar flux.
     monteCarlo->_tallies->TallyScalarFlux(mc_particle.segment_path_length * mc_particle.weight, mc_particle.domain,
-                                    flux_tally_index, mc_particle.cell, mc_particle.energy_group);
+                                          flux_tally_index, mc_particle.cell, mc_particle.energy_group);
 
     return segment_outcome;
 }
@@ -230,10 +230,10 @@ HOST_DEVICE_END
 
 HOST_DEVICE
 static inline unsigned int MC_Find_Min(const double *array,
-                                       int     num_elements)
+                                       int num_elements)
 {
     double min = array[0];
-    int    min_index = 0;
+    int min_index = 0;
 
     for (int element_index = 1; element_index < num_elements; ++element_index)
     {

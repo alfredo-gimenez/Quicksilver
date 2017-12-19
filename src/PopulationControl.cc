@@ -11,10 +11,10 @@
 
 namespace
 {
-   void PopulationControlGuts(const double splitRRFactor, 
-                              uint64_t currentNumParticles,
-                              ParticleVaultContainer* my_particle_vault,
-                              Balance& taskBalance);
+    void PopulationControlGuts(const double splitRRFactor,
+                               uint64_t currentNumParticles,
+                               ParticleVaultContainer* my_particle_vault,
+                               Balance& taskBalance);
 }
 
 void PopulationControl(MonteCarlo* monteCarlo, bool loadBalance)
@@ -24,7 +24,7 @@ void PopulationControl(MonteCarlo* monteCarlo, bool loadBalance)
     uint64_t targetNumParticles = monteCarlo->_params.simulationParams.nParticles;
     uint64_t globalNumParticles = 0;
     uint64_t localNumParticles = monteCarlo->_particleVaultContainer->sizeProcessing();
-   
+
     if (loadBalance)
     {
         // If we are parallel, we will have one domain per mpi processs.  The targetNumParticles is across
@@ -40,7 +40,7 @@ void PopulationControl(MonteCarlo* monteCarlo, bool loadBalance)
     {
         mpiAllreduce(&localNumParticles, &globalNumParticles, 1, MPI_UINT64_T, MPI_SUM, MPI_COMM_WORLD);
     }
-     
+
     Balance & taskBalance = monteCarlo->_tallies->_balanceTask[0];
 
     double splitRRFactor = 1.0;
@@ -68,58 +68,58 @@ void PopulationControl(MonteCarlo* monteCarlo, bool loadBalance)
 
 namespace
 {
-void PopulationControlGuts(const double splitRRFactor, uint64_t currentNumParticles, ParticleVaultContainer* my_particle_vault, Balance& taskBalance)
-{
-    uint64_t vault_size = my_particle_vault->getVaultSize();
-    uint64_t fill_vault_index = currentNumParticles / vault_size;
-
-    // March backwards through the vault so killed particles doesn't mess up the indexing
-    for (int particleIndex = currentNumParticles-1; particleIndex >= 0; particleIndex--)
+    void PopulationControlGuts(const double splitRRFactor, uint64_t currentNumParticles, ParticleVaultContainer* my_particle_vault, Balance& taskBalance)
     {
-        uint64_t vault_index = particleIndex / vault_size; 
+        uint64_t vault_size = my_particle_vault->getVaultSize();
+        uint64_t fill_vault_index = currentNumParticles / vault_size;
 
-        ParticleVault& taskProcessingVault = *( my_particle_vault->getTaskProcessingVault(vault_index) );
-
-        uint64_t taskParticleIndex = particleIndex%vault_size;
-
-        MC_Base_Particle &currentParticle = taskProcessingVault[taskParticleIndex];
-        double randomNumber = rngSample(&currentParticle.random_number_seed);
-        if (splitRRFactor < 1)
+        // March backwards through the vault so killed particles doesn't mess up the indexing
+        for (int particleIndex = currentNumParticles-1; particleIndex >= 0; particleIndex--)
         {
-            if (randomNumber > splitRRFactor)
+            uint64_t vault_index = particleIndex / vault_size;
+
+            ParticleVault& taskProcessingVault = *( my_particle_vault->getTaskProcessingVault(vault_index) );
+
+            uint64_t taskParticleIndex = particleIndex%vault_size;
+
+            MC_Base_Particle &currentParticle = taskProcessingVault[taskParticleIndex];
+            double randomNumber = rngSample(&currentParticle.random_number_seed);
+            if (splitRRFactor < 1)
             {
-                // Kill
-	            taskProcessingVault.eraseSwapParticle(taskParticleIndex);
-	            taskBalance._rr++; 
-	        }
-	        else
-	        {
-	            currentParticle.weight /= splitRRFactor;
-	        }
-        }
-        else if (splitRRFactor > 1)
-        {
-            // Split
-	        int splitFactor = (int)floor(splitRRFactor);
-	        if (randomNumber > (splitRRFactor - splitFactor)) { splitFactor--; }
-	  
-	        currentParticle.weight /= splitRRFactor;
-	        MC_Base_Particle splitParticle = currentParticle;
-	  
-	        for (int splitFactorIndex = 0; splitFactorIndex < splitFactor; splitFactorIndex++)
-	        {
-	            taskBalance._split++;
-	     
-	            splitParticle.random_number_seed = rngSpawn_Random_Number_Seed(
-			        &currentParticle.random_number_seed);
-	            splitParticle.identifier = splitParticle.random_number_seed;
+                if (randomNumber > splitRRFactor)
+                {
+                    // Kill
+                    taskProcessingVault.eraseSwapParticle(taskParticleIndex);
+                    taskBalance._rr++;
+                }
+                else
+                {
+                    currentParticle.weight /= splitRRFactor;
+                }
+            }
+            else if (splitRRFactor > 1)
+            {
+                // Split
+                int splitFactor = (int)floor(splitRRFactor);
+                if (randomNumber > (splitRRFactor - splitFactor)) { splitFactor--; }
 
-                my_particle_vault->addProcessingParticle( splitParticle, fill_vault_index );
+                currentParticle.weight /= splitRRFactor;
+                MC_Base_Particle splitParticle = currentParticle;
 
-	        }
+                for (int splitFactorIndex = 0; splitFactorIndex < splitFactor; splitFactorIndex++)
+                {
+                    taskBalance._split++;
+
+                    splitParticle.random_number_seed = rngSpawn_Random_Number_Seed(
+                        &currentParticle.random_number_seed);
+                    splitParticle.identifier = splitParticle.random_number_seed;
+
+                    my_particle_vault->addProcessingParticle( splitParticle, fill_vault_index );
+
+                }
+            }
         }
     }
-}
 } // anonymous namespace
 
 
@@ -138,34 +138,34 @@ void RouletteLowWeightParticles(MonteCarlo* monteCarlo)
 
         Balance& taskBalance = monteCarlo->_tallies->_balanceTask[0];
 
-	    // March backwards through the vault so killed particles don't mess up the indexing
-	    const double source_particle_weight = monteCarlo->source_particle_weight;
-	    const double weightCutoff = lowWeightCutoff*source_particle_weight;
+        // March backwards through the vault so killed particles don't mess up the indexing
+        const double source_particle_weight = monteCarlo->source_particle_weight;
+        const double weightCutoff = lowWeightCutoff*source_particle_weight;
 
-	    for ( int64_t particleIndex = currentNumParticles-1; particleIndex >= 0; particleIndex--)
-	    {
-            uint64_t vault_index = particleIndex / vault_size; 
+        for ( int64_t particleIndex = currentNumParticles-1; particleIndex >= 0; particleIndex--)
+        {
+            uint64_t vault_index = particleIndex / vault_size;
 
             ParticleVault& taskProcessingVault = *(monteCarlo->_particleVaultContainer->getTaskProcessingVault(vault_index));
             uint64_t taskParticleIndex = particleIndex%vault_size;
-	        MC_Base_Particle &currentParticle = taskProcessingVault[taskParticleIndex];
+            MC_Base_Particle &currentParticle = taskProcessingVault[taskParticleIndex];
 
-	        if (currentParticle.weight <= weightCutoff)
-	        {
-	            double randomNumber = rngSample(&currentParticle.random_number_seed);
-	            if (randomNumber <= lowWeightCutoff)
-	            {
-		            // The particle history continues with an increased weight.
-		            currentParticle.weight /= lowWeightCutoff;
-	            }
-	            else
-	            {
-		            // Kill
-		            taskProcessingVault.eraseSwapParticle(taskParticleIndex);
-		            taskBalance._rr++;
-	            } 
-	        }
-	    }
+            if (currentParticle.weight <= weightCutoff)
+            {
+                double randomNumber = rngSample(&currentParticle.random_number_seed);
+                if (randomNumber <= lowWeightCutoff)
+                {
+                    // The particle history continues with an increased weight.
+                    currentParticle.weight /= lowWeightCutoff;
+                }
+                else
+                {
+                    // Kill
+                    taskProcessingVault.eraseSwapParticle(taskParticleIndex);
+                    taskBalance._rr++;
+                }
+            }
+        }
         monteCarlo->_particleVaultContainer->collapseProcessing();
     }
 }

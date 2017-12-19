@@ -26,12 +26,12 @@ void coralBenchmarkCorrectness( MonteCarlo* monteCarlo, Parameters &params )
         //  withing some tolerance, based on input expectation
         BalanceRatioTest( monteCarlo, params );
 
-        //Test Balance Tallies for equality in number of Facet Crossing 
-        //and Collision events 
+        //Test Balance Tallies for equality in number of Facet Crossing
+        //and Collision events
         BalanceEventTest( monteCarlo );
-        
+
         //Test for lost particles during the simulation
-        //  This test should always succeed unless test for 
+        //  This test should always succeed unless test for
         //  done was broken, or we are running with 1 MPI rank
         //  and so never preform this test duing test_for_done
         MissingParticleTest( monteCarlo );
@@ -56,8 +56,8 @@ void BalanceRatioTest( MonteCarlo *monteCarlo, Parameters &params )
     double absorbRatio, fissionRatio, scatterRatio;
 
     for (auto matIter = params.materialParams.begin();
-              matIter != params.materialParams.end(); 
-              matIter++)
+         matIter != params.materialParams.end();
+         matIter++)
     {
         const MaterialParameters& mp = matIter->second;
         fissionRatio = mp.fissionCrossSectionRatio;
@@ -119,11 +119,11 @@ void BalanceEventTest( MonteCarlo *monteCarlo )
     uint64_t facetCrossing = num_segments - census - collisions;
 
     double ratio = std::abs( (double(facetCrossing) / double(collisions)) - 1);
-    
-    double tolerance = 1.0;    
+
+    double tolerance = 1.0;
     bool pass = true;
-    if( ratio > (tolerance/100.0) ) pass = false; 
-    
+    if( ratio > (tolerance/100.0) ) pass = false;
+
     if( pass )
     {
         fprintf( stdout, "PASS:: Collision to Facet Crossing Ratio maintained even balanced within %g%% tolerance\n", tolerance );
@@ -145,7 +145,7 @@ void MissingParticleTest( MonteCarlo *monteCarlo )
     Balance &balTally = monteCarlo->_tallies->_balanceCumulative;
 
     uint64_t gains = 0, losses = 0;
-    
+
     gains   = balTally._start  + balTally._source + balTally._produce + balTally._split;
     losses  = balTally._absorb + balTally._census + balTally._escape  + balTally._rr + balTally._fission;
 
@@ -175,9 +175,9 @@ void FluenceTest( MonteCarlo* monteCarlo )
     int numDomains = monteCarlo->_tallies->_fluence._domain.size();
     for (int domainIndex = 0; domainIndex < numDomains; domainIndex++)
     {
-        
+
         double local_sum = 0.0;
-        int numCells = monteCarlo->_tallies->_fluence._domain[domainIndex]->size(); 
+        int numCells = monteCarlo->_tallies->_fluence._domain[domainIndex]->size();
 
         for (int cellIndex = 0; cellIndex < numCells; cellIndex++)
         {
@@ -185,7 +185,7 @@ void FluenceTest( MonteCarlo* monteCarlo )
         }
 
         double average = local_sum / numCells;
-        
+
         for (int cellIndex = 0; cellIndex < numCells; cellIndex++)
         {
             double cellValue = monteCarlo->_tallies->_fluence._domain[domainIndex]->getCell( cellIndex );

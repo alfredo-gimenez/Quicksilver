@@ -30,34 +30,34 @@ static double mc_std_dev(uint64_t const data[], int const nelm)
 void MC_Fast_Timer_Container::Print_Last_Cycle_Heading(int mpi_rank)
 {
 #ifdef DISABLE_TIMERS
-  return;
+    return;
 #endif
 
-   if (mpi_rank == 0)
-   {
-      fprintf(stdout,"\n%-25s %12s %12s %12s %12s %12s %12s\n", "Timer", "Last Cycle", "Last Cycle", "Last Cycle", "Last Cycle", "Last Cycle", "Last Cycle");
-      fprintf(stdout,  "%-25s %12s %12s %12s %12s %12s %12s\n", "Name",  "number",     "microSecs",  "microSecs",  "microSecs",  "microSecs",  "Efficiency");
-      fprintf(stdout,  "%-25s %12s %12s %12s %12s %12s %12s\n", "",      "of calls",   "min",        "avg",        "max",        "stddev",     "Rating");
-   }
+    if (mpi_rank == 0)
+    {
+        fprintf(stdout,"\n%-25s %12s %12s %12s %12s %12s %12s\n", "Timer", "Last Cycle", "Last Cycle", "Last Cycle", "Last Cycle", "Last Cycle", "Last Cycle");
+        fprintf(stdout,  "%-25s %12s %12s %12s %12s %12s %12s\n", "Name",  "number",     "microSecs",  "microSecs",  "microSecs",  "microSecs",  "Efficiency");
+        fprintf(stdout,  "%-25s %12s %12s %12s %12s %12s %12s\n", "",      "of calls",   "min",        "avg",        "max",        "stddev",     "Rating");
+    }
 }
 
 void MC_Fast_Timer_Container::Print_Cumulative_Heading(int mpi_rank)
 {
 #ifdef DISABLE_TIMERS
-  return;
+    return;
 #endif
-   if (mpi_rank == 0)
-   {
-      fprintf(stdout,"\n%-25s %12s %12s %12s %12s %12s %12s\n", "Timer", "Cumulative", "Cumulative", "Cumulative", "Cumulative", "Cumulative", "Cumulative");
-      fprintf(stdout,  "%-25s %12s %12s %12s %12s %12s %12s\n", "Name",  "number",     "microSecs",  "microSecs",  "microSecs",  "microSecs",  "Efficiency");
-      fprintf(stdout,  "%-25s %12s %12s %12s %12s %12s %12s\n", "",      "of calls",   "min",        "avg",        "max",        "stddev",     "Rating");
-   }
+    if (mpi_rank == 0)
+    {
+        fprintf(stdout,"\n%-25s %12s %12s %12s %12s %12s %12s\n", "Timer", "Cumulative", "Cumulative", "Cumulative", "Cumulative", "Cumulative", "Cumulative");
+        fprintf(stdout,  "%-25s %12s %12s %12s %12s %12s %12s\n", "Name",  "number",     "microSecs",  "microSecs",  "microSecs",  "microSecs",  "Efficiency");
+        fprintf(stdout,  "%-25s %12s %12s %12s %12s %12s %12s\n", "",      "of calls",   "min",        "avg",        "max",        "stddev",     "Rating");
+    }
 }
 
 void MC_Fast_Timer_Container::Cumulative_Report(int mpi_rank, int num_ranks, MPI_Comm comm_world, uint64_t numSegments)
 {
 #ifdef DISABLE_TIMERS
-  return;
+    return;
 #endif
 
     fflush(stdout); mpiBarrier(comm_world);
@@ -81,32 +81,32 @@ void MC_Fast_Timer_Container::Cumulative_Report(int mpi_rank, int num_ranks, MPI
     {
         mpiGather(&cumulativeClock[timer_index], 1, MPI_UINT64_T, &std_dev_use[0], 1, MPI_UINT64_T, 0, comm_world);
 
-        uint64_t  ave_clock =  sum_clock[timer_index] / num_ranks;
+        uint64_t ave_clock =  sum_clock[timer_index] / num_ranks;
         if (mpi_rank == 0) {
             fprintf(stdout,"%-25s %12lu %12.3e %12.3e %12.3e %12.3e %12.2f\n",
-                           mc_fast_timer_names[timer_index],
-                           (unsigned long)this->timers[timer_index].numCalls,
-                           (double)min_clock[timer_index],
-                           (double)ave_clock,
-                           (double)max_clock[timer_index],
-                           (double)mc_std_dev(&std_dev_use[0], num_ranks),
-                           (100.0 * ave_clock) / (max_clock[timer_index] + 1.0e-80) );
+                    mc_fast_timer_names[timer_index],
+                    (unsigned long)this->timers[timer_index].numCalls,
+                    (double)min_clock[timer_index],
+                    (double)ave_clock,
+                    (double)max_clock[timer_index],
+                    (double)mc_std_dev(&std_dev_use[0], num_ranks),
+                    (100.0 * ave_clock) / (max_clock[timer_index] + 1.0e-80) );
         }
     }
     if( mpi_rank == 0 )
     {
         int cycleTracking_Index = 2;
         fprintf(stdout, "%-25s %12.3e %-25s\n",
-                        "Figure Of Merit",
-                        (numSegments / (max_clock[cycleTracking_Index]*1e-6)),
-                        "[Cycle Tracking Time / Num Segments]" );
+                "Figure Of Merit",
+                (numSegments / (max_clock[cycleTracking_Index]*1e-6)),
+                "[Cycle Tracking Time / Num Segments]" );
     }
 }
 
 void MC_Fast_Timer_Container::Last_Cycle_Report(int mpi_rank, int num_ranks, MPI_Comm comm_world)
 {
 #ifdef DISABLE_TIMERS
-  return;
+    return;
 #endif
 
     fflush(stdout); mpiBarrier(comm_world);
@@ -130,16 +130,16 @@ void MC_Fast_Timer_Container::Last_Cycle_Report(int mpi_rank, int num_ranks, MPI
     {
         mpiGather(&lastCycleClock[timer_index], 1, MPI_UINT64_T, &std_dev_use[0], 1, MPI_UINT64_T, 0, comm_world);
 
-        uint64_t  ave_clock =  sum_clock[timer_index] / num_ranks;
+        uint64_t ave_clock =  sum_clock[timer_index] / num_ranks;
         if (mpi_rank == 0) {
             fprintf(stdout,"%-25s %12lu %12.3e %12.3e %12.3e %12.3e %12.2f\n",
-                           mc_fast_timer_names[timer_index],
-                           (unsigned long)this->timers[timer_index].numCalls,
-                           (double)min_clock[timer_index],
-                           (double)ave_clock,
-                           (double)max_clock[timer_index],
-                           (double)mc_std_dev(&std_dev_use[0], num_ranks),
-                           (100.0 * ave_clock) / (max_clock[timer_index] + 1.0e-80) );
+                    mc_fast_timer_names[timer_index],
+                    (unsigned long)this->timers[timer_index].numCalls,
+                    (double)min_clock[timer_index],
+                    (double)ave_clock,
+                    (double)max_clock[timer_index],
+                    (double)mc_std_dev(&std_dev_use[0], num_ranks),
+                    (100.0 * ave_clock) / (max_clock[timer_index] + 1.0e-80) );
         }
     }
 }

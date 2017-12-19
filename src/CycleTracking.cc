@@ -47,7 +47,7 @@ void CycleTrackingFunction( MonteCarlo *monteCarlo, MC_Particle &mc_particle, in
         //
 #ifdef EXPONENTIAL_TALLY
         monteCarlo->_tallies->TallyCellValue( exp(rngSample(&mc_particle.random_number_seed)) , mc_particle.domain, cell_tally_index, mc_particle.cell);
-#endif   
+#endif
         MC_Segment_Outcome_type::Enum segment_outcome = MC_Segment_Outcome(monteCarlo, mc_particle, flux_tally_index);
 
         ATOMIC_UPDATE( monteCarlo->_tallies->_balanceTask[tally_index]._numSegments);
@@ -55,23 +55,23 @@ void CycleTrackingFunction( MonteCarlo *monteCarlo, MC_Particle &mc_particle, in
         mc_particle.num_segments += 1.;  /* Track the number of segments this particle has
                                             undergone this cycle on all processes. */
         switch (segment_outcome) {
-        case MC_Segment_Outcome_type::Collision:
+            case MC_Segment_Outcome_type::Collision :
             {
-            // The particle undergoes a collision event producing:
-            //   (0) Other-than-one same-species secondary particle, or
-            //   (1) Exactly one same-species secondary particle.
-            if (CollisionEvent(monteCarlo, mc_particle, tally_index ) == MC_Collision_Event_Return::Continue_Tracking)
-            {
-                keepTrackingThisParticle = true;
-            }
-            else
-            {
-                keepTrackingThisParticle = false;
-            }
+                // The particle undergoes a collision event producing:
+                //   (0) Other-than-one same-species secondary particle, or
+                //   (1) Exactly one same-species secondary particle.
+                if (CollisionEvent(monteCarlo, mc_particle, tally_index ) == MC_Collision_Event_Return::Continue_Tracking)
+                {
+                    keepTrackingThisParticle = true;
+                }
+                else
+                {
+                    keepTrackingThisParticle = false;
+                }
             }
             break;
-    
-        case MC_Segment_Outcome_type::Facet_Crossing:
+
+            case MC_Segment_Outcome_type::Facet_Crossing :
             {
                 // The particle has reached a cell facet.
                 MC_Tally_Event::Enum facet_crossing_type = MC_Facet_Crossing_Event(mc_particle, monteCarlo, particle_index, processingVault);
@@ -100,8 +100,8 @@ void CycleTrackingFunction( MonteCarlo *monteCarlo, MC_Particle &mc_particle, in
                 }
             }
             break;
-    
-        case MC_Segment_Outcome_type::Census:
+
+            case MC_Segment_Outcome_type::Census :
             {
                 // The particle has reached the end of the time step.
                 processedVault->pushParticle(mc_particle);
@@ -109,12 +109,12 @@ void CycleTrackingFunction( MonteCarlo *monteCarlo, MC_Particle &mc_particle, in
                 keepTrackingThisParticle = false;
                 break;
             }
-            
-        default:
-           qs_assert(false);
-           break;  // should this be an error
+
+            default :
+                qs_assert(false);
+                break; // should this be an error
         }
-    
+
     } while ( keepTrackingThisParticle );
 }
 HOST_DEVICE_END

@@ -13,7 +13,7 @@ cleanVault( int end_index )
 
 #if defined HAVE_OPENMP_TARGET
     int USE_GPU = mcco->processor_info->use_gpu;
-    #pragma omp target teams distribute parallel for thread_limit(64) if(target:USE_GPU) 
+    #pragma omp target teams distribute parallel for thread_limit(64) if(target:USE_GPU)
 #endif
     for( int ii = starting_point; ii < s2; ii++ )
     {
@@ -29,7 +29,7 @@ cleanVault( int end_index )
 void ParticleVault::
 collapse( size_t fill_size, ParticleVault* vault2 )
 {
-    //The entirety of vault 2 fits in the space available in this vault 
+    //The entirety of vault 2 fits in the space available in this vault
     if( vault2->size() < fill_size )
     {
         this->append( *vault2 );
@@ -48,6 +48,6 @@ collapse( size_t fill_size, ParticleVault* vault2 )
                 this->pushBaseParticle( base_particle );
                 fill++;
             }
-        }while( notEmpty && fill < fill_size);
+        } while( notEmpty && fill < fill_size);
     }
 }

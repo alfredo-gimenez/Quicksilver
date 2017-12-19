@@ -1,16 +1,16 @@
 #include "PhysicalConstants.hh"
 
-   // The values of all physical constants are taken from:
-   // 2006 CODATA which is located on the web at
-   // http://physics.nist.gov/cuu/Constants/codata.pdf
+// The values of all physical constants are taken from:
+// 2006 CODATA which is located on the web at
+// http://physics.nist.gov/cuu/Constants/codata.pdf
 
-   // The units of physical quantities used by the code are:
-   //    Mass         -  gram (g)
-   //    Length       -  centimeter (cm)
-   //    Time         -  second (s)
-   //    Energy       -  million electron-volts (MeV) : of a particle
-   //    Energy       -  erg (g cm^2/s^2): in some background calculation
-   //    Temperature  -  thousand electron-volts (keV)
+// The units of physical quantities used by the code are:
+//    Mass         -  gram (g)
+//    Length       -  centimeter (cm)
+//    Time         -  second (s)
+//    Energy       -  million electron-volts (MeV) : of a particle
+//    Energy       -  erg (g cm^2/s^2): in some background calculation
+//    Temperature  -  thousand electron-volts (keV)
 
 const double PhysicalConstants::_neutronRestMassEnergy = 9.395656981095e+2; /* MeV */
 const double PhysicalConstants::_pi = 3.1415926535897932;

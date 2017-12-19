@@ -15,17 +15,17 @@ void Tallies::CycleInitialize(MonteCarlo* monteCarlo)
 
 void Tallies::SumTasks(void)
 {
-   for (int replication_index = 1; replication_index < _num_balance_replications; replication_index++)
-   {
-      _balanceTask[0].Add(_balanceTask[replication_index]);    // Add index 1 and greater to index 0
-      _balanceTask[replication_index].Reset();                 // reset index 1 and greater after addition
-   }
+    for (int replication_index = 1; replication_index < _num_balance_replications; replication_index++)
+    {
+        _balanceTask[0].Add(_balanceTask[replication_index]);  // Add index 1 and greater to index 0
+        _balanceTask[replication_index].Reset();               // reset index 1 and greater after addition
+    }
 }
 
 void Tallies::CycleFinalize(MonteCarlo *monteCarlo)
 {
     SumTasks(); // sum the task level data down to index 0 at the end of each cycle
-    
+
     vector<uint64_t> tal;
     tal.reserve( 13 );
     tal.push_back(_balanceTask[0]._absorb);
@@ -78,14 +78,14 @@ void Tallies::CycleFinalize(MonteCarlo *monteCarlo)
         for (int replication_index = 1; replication_index < _num_flux_replications; replication_index++)
         {
             _cellTallyDomain[domainIndex]._task[0].Add( _cellTallyDomain[domainIndex]._task[replication_index]);
-            _cellTallyDomain[domainIndex]._task[replication_index].Reset();  
+            _cellTallyDomain[domainIndex]._task[replication_index].Reset();
         }
 
         //Sum Scalar Flux Tally Replications
         for (int replication_index = 1; replication_index < _num_flux_replications; replication_index++)
         {
             _scalarFluxDomain[domainIndex]._task[0].Add(_scalarFluxDomain[domainIndex]._task[replication_index]);
-            _scalarFluxDomain[domainIndex]._task[replication_index].Reset();  
+            _scalarFluxDomain[domainIndex]._task[replication_index].Reset();
         }
 
         if( monteCarlo->_params.simulationParams.coralBenchmark )
@@ -102,7 +102,7 @@ void Fluence::compute( int domainIndex, ScalarFluxDomain &scalarFluxDomain )
 
     while( this->_domain.size() <= domainIndex )
     {
-        FluenceDomain *newDomain = new FluenceDomain( numCells ); 
+        FluenceDomain *newDomain = new FluenceDomain( numCells );
         this->_domain.push_back( newDomain );
     }
 
@@ -121,25 +121,25 @@ void Fluence::compute( int domainIndex, ScalarFluxDomain &scalarFluxDomain )
 
 void Tallies::PrintSummary(MonteCarlo *monteCarlo)
 {
-   MC_FASTTIMER_STOP(MC_Fast_Timer::cycleFinalize); // stop the finalize timer to get report
+    MC_FASTTIMER_STOP(MC_Fast_Timer::cycleFinalize); // stop the finalize timer to get report
 
-   if ( monteCarlo->time_info->cycle == 0 )
-   {
-       Print0("%-8s ", "cycle");
-       _balanceTask[0].PrintHeader();
-       Print0("%14s %14s %14s %14s\n", "scalar_flux", "cycleInit", "cycleTracking", "cycleFinalize");
-   }
+    if ( monteCarlo->time_info->cycle == 0 )
+    {
+        Print0("%-8s ", "cycle");
+        _balanceTask[0].PrintHeader();
+        Print0("%14s %14s %14s %14s\n", "scalar_flux", "cycleInit", "cycleTracking", "cycleFinalize");
+    }
 
-   Print0("%8i ", monteCarlo->time_info->cycle);
-   _balanceTask[0].Print();
-   double sum = ScalarFluxSum(monteCarlo);
-   Print0("%14e %14e %14e %14e\n", sum,
-      MC_FASTTIMER_GET_LASTCYCLE(MC_Fast_Timer::cycleInit),
-      MC_FASTTIMER_GET_LASTCYCLE(MC_Fast_Timer::cycleTracking),
-      MC_FASTTIMER_GET_LASTCYCLE(MC_Fast_Timer::cycleFinalize)
-   );
+    Print0("%8i ", monteCarlo->time_info->cycle);
+    _balanceTask[0].Print();
+    double sum = ScalarFluxSum(monteCarlo);
+    Print0("%14e %14e %14e %14e\n", sum,
+           MC_FASTTIMER_GET_LASTCYCLE(MC_Fast_Timer::cycleInit),
+           MC_FASTTIMER_GET_LASTCYCLE(MC_Fast_Timer::cycleTracking),
+           MC_FASTTIMER_GET_LASTCYCLE(MC_Fast_Timer::cycleFinalize)
+           );
 
-   MC_FASTTIMER_START(MC_Fast_Timer::cycleFinalize); // restart the finalize timer
+    MC_FASTTIMER_START(MC_Fast_Timer::cycleFinalize); // restart the finalize timer
 }
 
 double Tallies::ScalarFluxSum(MonteCarlo *monteCarlo)
@@ -169,10 +169,10 @@ double Tallies::ScalarFluxSum(MonteCarlo *monteCarlo)
     return sum;
 }
 
-void Tallies::InitializeTallies( MonteCarlo *monteCarlo, 
-                        int balance_replications = 1, 
-                        int flux_replications = 1, 
-                        int cell_replications = 1 ) 
+void Tallies::InitializeTallies( MonteCarlo *monteCarlo,
+                                 int balance_replications = 1,
+                                 int flux_replications = 1,
+                                 int cell_replications = 1 )
 {
 
     //Set num replications from input parameters
@@ -184,8 +184,8 @@ void Tallies::InitializeTallies( MonteCarlo *monteCarlo,
     //Initialize the balance tally replications
     if( _balanceTask.size() == 0 )
     {
-        if( _balanceTask.capacity() == 0 ) 
-        {        
+        if( _balanceTask.capacity() == 0 )
+        {
             //Reserve replicas number of balance tallies
             _balanceTask.reserve(_num_balance_replications,VAR_MEM);
         }
@@ -195,7 +195,7 @@ void Tallies::InitializeTallies( MonteCarlo *monteCarlo,
         for( int reps = 0; reps < _num_balance_replications; reps++ )
         {
             //Push back a Constructed object onto the qs vector
-            _balanceTask.push_back( Balance() ); 
+            _balanceTask.push_back( Balance() );
         }
         //Close the qs vectors diss-allowing push back
         _balanceTask.Close();
@@ -204,16 +204,16 @@ void Tallies::InitializeTallies( MonteCarlo *monteCarlo,
     //Initialize the cellTally
     if( _cellTallyDomain.size() == 0 )
     {
-        if( _cellTallyDomain.capacity() == 0 ) 
-        {   
+        if( _cellTallyDomain.capacity() == 0 )
+        {
             _cellTallyDomain.reserve(monteCarlo->domain.size(), VAR_MEM);
-        }   
+        }
         _cellTallyDomain.Open();
         for (int domainIndex = 0; domainIndex < monteCarlo->domain.size(); domainIndex++)
-        {   
+        {
             _cellTallyDomain.push_back(CellTallyDomain(&monteCarlo->domain[domainIndex],
                                                        _num_cellTally_replications));
-        }   
+        }
         _cellTallyDomain.Close();
     }
 
@@ -228,7 +228,7 @@ void Tallies::InitializeTallies( MonteCarlo *monteCarlo,
         for (int domainIndex = 0; domainIndex < monteCarlo->domain.size(); domainIndex++)
         {
             _scalarFluxDomain.push_back(ScalarFluxDomain(&monteCarlo->domain[domainIndex],
-                                                          monteCarlo->_nuclearData->_energies.size()-1,
+                                                         monteCarlo->_nuclearData->_energies.size()-1,
                                                          _num_flux_replications));
         }
         _scalarFluxDomain.Close();

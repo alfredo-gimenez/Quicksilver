@@ -21,14 +21,14 @@
 
 namespace
 {
-   double Get_Speed_From_Energy(double energy);
+    double Get_Speed_From_Energy(double energy);
 }
 
 
 void MC_SourceNow(MonteCarlo *monteCarlo)
 {
     NVTX_Range range("MC_Source_Now");
-  
+
     std::vector<double> source_rate(monteCarlo->_materialDatabase->_mat.size());  // Get this from user input
 
     for ( int material_index = 0; material_index < monteCarlo->_materialDatabase->_mat.size(); material_index++ )
@@ -102,7 +102,7 @@ void MC_SourceNow(MonteCarlo *monteCarlo)
 
                 // sample energy uniformly from [eMin, eMax] MeV
                 particle.kinetic_energy = (monteCarlo->_params.simulationParams.eMax - monteCarlo->_params.simulationParams.eMin)*
-                                rngSample(&particle.random_number_seed) + monteCarlo->_params.simulationParams.eMin;
+                                          rngSample(&particle.random_number_seed) + monteCarlo->_params.simulationParams.eMin;
 
                 double speed = Get_Speed_From_Energy(particle.kinetic_energy);
 
@@ -132,32 +132,32 @@ void MC_SourceNow(MonteCarlo *monteCarlo)
         }
     }
 
-#if 0 
+#if 0
     // Check for duplicate particle random number seeds.
     std::vector<uint64_t> particle_seeds;
     int task_index = 0;
     //for ( int task_index = 0; task_index < num_threads; task_index++ )
     {
-       ParticleVault& particleVault = monteCarlo->_particleVaultContainer->getTaskProcessingVault(task_index);
-       
-       uint64_t currentNumParticles = particleVault.size();
-       for (int particleIndex = 0; particleIndex < currentNumParticles; particleIndex++)
-       {
-	  MC_Base_Particle &currentParticle = particleVault[particleIndex];
-	  particle_seeds.push_back(currentParticle.random_number_seed);
-       }
+        ParticleVault& particleVault = monteCarlo->_particleVaultContainer->getTaskProcessingVault(task_index);
+
+        uint64_t currentNumParticles = particleVault.size();
+        for (int particleIndex = 0; particleIndex < currentNumParticles; particleIndex++)
+        {
+            MC_Base_Particle &currentParticle = particleVault[particleIndex];
+            particle_seeds.push_back(currentParticle.random_number_seed);
+        }
     }
 
     std::sort(particle_seeds.begin(), particle_seeds.end());
     uint64_t num_dupl = 0;
     for (size_t pi_index = 0; pi_index<particle_seeds.size()-1; pi_index++)
     {
-      if (particle_seeds[pi_index] == particle_seeds[pi_index+1])
-      {
- 	 num_dupl++;
- 	 printf("*** found duplicate particle random number seed= %ull (%ull) at index pi_index= %d\n", 
-		particle_seeds[pi_index], particle_seeds[pi_index+1], pi_index);
-      }
+        if (particle_seeds[pi_index] == particle_seeds[pi_index+1])
+        {
+            num_dupl++;
+            printf("*** found duplicate particle random number seed= %ull (%ull) at index pi_index= %d\n",
+                   particle_seeds[pi_index], particle_seeds[pi_index+1], pi_index);
+        }
     }
     printf("Number of duplicate random number seeds= %ull \n", num_dupl);
 #endif
@@ -166,13 +166,13 @@ void MC_SourceNow(MonteCarlo *monteCarlo)
 
 namespace
 {
-   double Get_Speed_From_Energy(double energy)
-   {
-      static const double rest_mass_energy = PhysicalConstants::_neutronRestMassEnergy;
-      static const double speed_of_light  = PhysicalConstants::_speedOfLight;
+    double Get_Speed_From_Energy(double energy)
+    {
+        static const double rest_mass_energy = PhysicalConstants::_neutronRestMassEnergy;
+        static const double speed_of_light  = PhysicalConstants::_speedOfLight;
 
 
-      return speed_of_light * sqrt(energy * (energy + 2.0*(rest_mass_energy)) /
-                                   ((energy + rest_mass_energy) * (energy + rest_mass_energy)));
-   }
+        return speed_of_light * sqrt(energy * (energy + 2.0*(rest_mass_energy)) /
+                                     ((energy + rest_mass_energy) * (energy + rest_mass_energy)));
+    }
 }

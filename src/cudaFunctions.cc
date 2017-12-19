@@ -1,6 +1,6 @@
 #include "cudaFunctions.hh"
 #include "cudaUtils.hh"
-#include <stdio.h> 
+#include <stdio.h>
 
 namespace
 {
@@ -19,8 +19,8 @@ namespace
 #if defined (HAVE_CUDA)
 void warmup_kernel()
 {
-        WarmUpKernel<<<1, 1>>>();
-        cudaDeviceSynchronize();
+    WarmUpKernel<<<1, 1>>>();
+    cudaDeviceSynchronize();
 }
 #endif
 
@@ -30,7 +30,7 @@ int ThreadBlockLayout( dim3 &grid, dim3 &block, int num_particles )
     int run_kernel = 1;
     const uint64_t max_block_size = 65535;
     const uint64_t threads_per_block = 128;
-    
+
     block.x = threads_per_block;
     block.y = 1;
     block.z = 1;
@@ -46,7 +46,7 @@ int ThreadBlockLayout( dim3 &grid, dim3 &block, int num_particles )
         grid.x = num_blocks;
         grid.y = 1;
         grid.z = 1;
-    } 
+    }
     else if( num_blocks <= max_block_size*max_block_size )
     {
         grid.x = max_block_size;
@@ -66,21 +66,21 @@ int ThreadBlockLayout( dim3 &grid, dim3 &block, int num_particles )
     }
 
     return run_kernel;
-} 
+}
 #endif
 
 #if defined (HAVE_CUDA)
-DEVICE 
+DEVICE
 int getGlobalThreadID()
 {
-    int blockID  =  blockIdx.x + 
-                    blockIdx.y * gridDim.x + 
-                    blockIdx.z * gridDim.x * gridDim.y;
+    int blockID  =  blockIdx.x +
+                   blockIdx.y * gridDim.x +
+                   blockIdx.z * gridDim.x * gridDim.y;
 
     int threadID =  blockID * (blockDim.x * blockDim.y * blockDim.z) +
-                    threadIdx.z * ( blockDim.x * blockDim.y ) + 
-                    threadIdx.y * blockDim.x +
-                    threadIdx.x;
+                   threadIdx.z * ( blockDim.x * blockDim.y ) +
+                   threadIdx.y * blockDim.x +
+                   threadIdx.x;
     return threadID;
 }
 #endif

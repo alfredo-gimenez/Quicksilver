@@ -74,7 +74,7 @@ void particle_buffer_base_type::Allocate(int buffer_size)
     if ( length_int_data % sizeof(double) != 0 )
     {
         MC_Fatal_Jump( "\nThe particle buffer for floating point data is not 8-byte alligned.\n"
-                         "This means buffer_size %i is not even\n", buffer_size);
+                       "This means buffer_size %i is not even\n", buffer_size);
     }
 
     this->int_data   = (int *)p;
@@ -181,7 +181,7 @@ void mcp_test_done_class::Get_Local_Gains_And_Losses(MonteCarlo *monteCarlo, int
 
     gains   = bal._start  + bal._source + bal._produce + bal._split;
     losses  = bal._absorb + bal._census + bal._escape  + bal._rr;
-    losses += bal._fission; 
+    losses += bal._fission;
 
     sent_recv[0] = gains;
     sent_recv[1] = losses;
@@ -215,7 +215,7 @@ void MC_Particle_Buffer::Instantiate()
     }
 
     for ( std::map<int,int>::iterator it = this->processor_buffer_map.begin();
-                                      it !=this->processor_buffer_map.end(); it++ )
+          it !=this->processor_buffer_map.end(); it++ )
     {
         int buffer    = (*it).second;
         int processor = (*it).first;
@@ -274,8 +274,8 @@ void MC_Particle_Buffer::Unpack_Particle_Buffer(int buffer_index, uint64_t &fill
     if (mcco->_params.simulationParams.debugThreads >= 2)
     {
         fprintf(stderr,"%02d-%02d <- %02d %3d particles MC_Particle_Buffer::Unpack_Particle_Buffer into vault %d\n",
-                        mcco->processor_info->rank ,omp_get_thread_num(), recv_buffer.processor,
-                        recv_buffer.num_particles, 0);
+                mcco->processor_info->rank ,omp_get_thread_num(), recv_buffer.processor,
+                recv_buffer.num_particles, 0);
     }
 
     // Unpack each particle and place into a partivault.
@@ -293,11 +293,11 @@ void MC_Particle_Buffer::Unpack_Particle_Buffer(int buffer_index, uint64_t &fill
 //----------------------------------------------------------------------------------------------------------------------
 //  Trivially_Done
 //      Do we have more than 1 processor running
-//      Do we have any particles to process locally 
+//      Do we have any particles to process locally
 //----------------------------------------------------------------------------------------------------------------------
 bool MC_Particle_Buffer::Trivially_Done()
 {
-    if (mcco->processor_info->num_processors > 1) 
+    if (mcco->processor_info->num_processors > 1)
     {
         return false;
     }
@@ -336,7 +336,7 @@ void MC_Particle_Buffer::Delete_Completed_Extra_Send_Buffers()
 
 //
 // MC_Particle_Buffer :: PUBLIC Functions
-// 
+//
 
 //----------------------------------------------------------------------------------------------------------------------
 //  Constructor.
@@ -366,7 +366,7 @@ void MC_Particle_Buffer::Initialize()
 {
     NVTX_Range range("MC_Particle_Buffer::Initialize");
 
-    if (mcco->processor_info->num_processors > 1) 
+    if (mcco->processor_info->num_processors > 1)
     {
         this->Instantiate();
 
@@ -384,7 +384,7 @@ int MC_Particle_Buffer::Choose_Buffer(int processor)
     if ( buffer < 0 || buffer >= this->num_buffers )
     {
         MC_Fatal_Jump( "Bad buffer value (buffer = %i) for neighbor.next_send %i, neighbor.replication_level %i, processor %i\n",
-                         buffer, neighbor.task[0].next_send, neighbor.replication_level, processor);
+                       buffer, neighbor.task[0].next_send, neighbor.replication_level, processor);
     }
 
     return buffer;
@@ -418,7 +418,7 @@ void MC_Particle_Buffer::Buffer_Particle(MC_Particle *particle, int buffer)
 }
 
 //----------------------------------------------------------------------------------------------------------------------
-//  Stores the particle into a particle buffer.  
+//  Stores the particle into a particle buffer.
 //  If the buffer becomes to full error out - no buffer flush mode.
 //----------------------------------------------------------------------------------------------------------------------
 void MC_Particle_Buffer::Buffer_Particle(MC_Base_Particle &particle, int buffer)
@@ -426,10 +426,10 @@ void MC_Particle_Buffer::Buffer_Particle(MC_Base_Particle &particle, int buffer)
     particle_buffer_base_type &send_buffer = this->task[0].send_buffer[buffer];
 
     if (mcco->_params.simulationParams.debugThreads >= 3)
-    { 
+    {
         fprintf(stderr,"%02d-%02d MC_Particle_Buffer::Buffer_Particle entered task_index=%d buffer_size=%d "
-                "buffer.num_particles=%d\n",mcco->processor_info->rank ,omp_get_thread_num(),0, buffer_size, 
-                send_buffer.num_particles); 
+                "buffer.num_particles=%d\n",mcco->processor_info->rank ,omp_get_thread_num(),0, buffer_size,
+                send_buffer.num_particles);
     }
 
     if ( send_buffer.int_data == NULL )
@@ -454,7 +454,7 @@ void MC_Particle_Buffer::Allocate_Send_Buffer( SendQueue &sendQueue )
     for( int buffer = 0; buffer < this->num_buffers; buffer++ )
     {
         particle_buffer_base_type &send_buffer = this->task[0].send_buffer[buffer];
-        int send_size = sendQueue.neighbor_size(send_buffer.processor); 
+        int send_size = sendQueue.neighbor_size(send_buffer.processor);
         send_buffer.Free_Memory();
         send_buffer.Allocate(send_size);
     }
@@ -512,11 +512,11 @@ void MC_Particle_Buffer::Post_Receive_Particle_Buffer( size_t bufferSize_ )
     {
         particle_buffer_base_type &recv_buffer = this->task[0].recv_buffer[buffer_index];
 
-        recv_buffer.Allocate(bufferSize_); 
+        recv_buffer.Allocate(bufferSize_);
 
         //Posting the Irecv Buffers
-        mpiIrecv(recv_buffer.int_data, recv_buffer.length, MPI_BYTE, recv_buffer.processor,          
-                 MC_Tag_Particle_Buffer, 
+        mpiIrecv(recv_buffer.int_data, recv_buffer.length, MPI_BYTE, recv_buffer.processor,
+                 MC_Tag_Particle_Buffer,
                  mcco->processor_info->comm_mc_world, &recv_buffer.request_list);
     }
 }
@@ -570,7 +570,7 @@ bool MC_Particle_Buffer::Test_Done_New( MC_New_Test_Done_Method::Enum test_done_
 
     MC_VERIFY_THREAD_ZERO
 
-    MC_FASTTIMER_START(MC_Fast_Timer::cycleTracking_Test_Done);
+        MC_FASTTIMER_START(MC_Fast_Timer::cycleTracking_Test_Done);
 
     mcco->_tallies->SumTasks();
 
@@ -635,8 +635,8 @@ bool MC_Particle_Buffer::Iallreduce_ParticleCounts()
         else
         {
             this->test_done.Get_Local_Gains_And_Losses(mcco, this->test_done.non_blocking_send);
-            mpiIAllreduce(this->test_done.non_blocking_send, this->test_done.non_blocking_sum, 
-                          2, MPI_INT64_T, MPI_SUM, mcco->processor_info->comm_mc_world, 
+            mpiIAllreduce(this->test_done.non_blocking_send, this->test_done.non_blocking_sum,
+                          2, MPI_INT64_T, MPI_SUM, mcco->processor_info->comm_mc_world,
                           &this->test_done.IallreduceRequest);
         }
     }

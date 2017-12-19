@@ -1,22 +1,22 @@
 #include "MC_Base_Particle.hh"
 
 #define MCP_DATA_MEMBER_OLD(member, buffer, index, mode) \
-   { if (     mode == MC_Data_Member_Operation::Count )  { (index)++; } \
-    else if ( mode == MC_Data_Member_Operation::Pack   ) { buffer[ (index)++ ] = (member); } \
-    else if ( mode == MC_Data_Member_Operation::Unpack ) { member = buffer[ (index)++ ]; }   \
-    else if ( mode == MC_Data_Member_Operation::Reset )  { (index)++; member = 0; } }
+    { if (     mode == MC_Data_Member_Operation::Count )  { (index)++; } \
+      else if ( mode == MC_Data_Member_Operation::Pack   ) { buffer[ (index)++ ] = (member); } \
+      else if ( mode == MC_Data_Member_Operation::Unpack ) { member = buffer[ (index)++ ]; }   \
+      else if ( mode == MC_Data_Member_Operation::Reset )  { (index)++; member = 0; } }
 
 #define MCP_DATA_MEMBER_CAST_OLD(member, buffer, index, mode, someType) \
-   { if (     mode == MC_Data_Member_Operation::Count )  { (index)++; } \
-    else if ( mode == MC_Data_Member_Operation::Pack   ) { buffer[ (index)++ ] = (member); } \
-    else if ( mode == MC_Data_Member_Operation::Unpack ) { member = (someType) buffer[ (index)++ ]; } \
-    else if ( mode == MC_Data_Member_Operation::Reset )  { (index)++; member = (someType) 0; } }
+    { if (     mode == MC_Data_Member_Operation::Count )  { (index)++; } \
+      else if ( mode == MC_Data_Member_Operation::Pack   ) { buffer[ (index)++ ] = (member); } \
+      else if ( mode == MC_Data_Member_Operation::Unpack ) { member = (someType) buffer[ (index)++ ]; } \
+      else if ( mode == MC_Data_Member_Operation::Reset )  { (index)++; member = (someType) 0; } }
 
 #define MCP_DATA_MEMBER_LONG_TO_CHAR8(member, buffer, index, mode) \
-  {      if ( mode == MC_Data_Member_Operation::Count  ) { (index) += 8; } \
-    else if ( mode == MC_Data_Member_Operation::Pack   ) { MC_Long_To_Char8(&member, &buffer[(index)]); (index) += 8; } \
-    else if ( mode == MC_Data_Member_Operation::Unpack ) { MC_Char8_To_Long(&member, &buffer[(index)]); (index) += 8; } \
-    else if ( mode == MC_Data_Member_Operation::Reset )  { (index) += 8; member = 0; }}
+    {      if ( mode == MC_Data_Member_Operation::Count  ) { (index) += 8; } \
+           else if ( mode == MC_Data_Member_Operation::Pack   ) { MC_Long_To_Char8(&member, &buffer[(index)]); (index) += 8; } \
+           else if ( mode == MC_Data_Member_Operation::Unpack ) { MC_Char8_To_Long(&member, &buffer[(index)]); (index) += 8; } \
+           else if ( mode == MC_Data_Member_Operation::Reset )  { (index) += 8; member = 0; }}
 
 void MC_Char8_To_Long(uint64_t *long_out, char char_in[8])
 {
@@ -58,7 +58,7 @@ void MC_Long_To_Char8(const uint64_t *long_in,
 //
 //----------------------------------------------------------------------------------------------------------------------
 void MC_Base_Particle::Serialize(int *int_data, double *float_data, char *char_data, int &int_index, int &float_index,
-                                int &char_index, MC_Data_Member_Operation::Enum mode)
+                                 int &char_index, MC_Data_Member_Operation::Enum mode)
 {
     MCP_DATA_MEMBER_OLD(coordinate.x, float_data, float_index, mode);
     MCP_DATA_MEMBER_OLD(coordinate.y, float_data, float_index, mode);
