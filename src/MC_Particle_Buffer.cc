@@ -1,7 +1,4 @@
 #include "MC_Particle_Buffer.hh"
-#ifdef HAVE_CALIPER
-#include<caliper/cali.h>
-#endif
 #include <time.h>
 #include "utilsMpi.hh"
 #include "ParticleVaultContainer.hh"
@@ -27,9 +24,6 @@ static std::map<int, int> recv_count;
 //----------------------------------------------------------------------------------------------------------------------
 void MCP_Cancel_Request(MPI_Request *request)
 {
-#ifdef HAVE_CALIPER
-CALI_CXX_MARK_FUNCTION;
-#endif
     if (request[0] != MPI_REQUEST_NULL)
     {
         MPI_Status status;
@@ -49,9 +43,6 @@ CALI_CXX_MARK_FUNCTION;
 //----------------------------------------------------------------------------------------------------------------------
 int MCP_Test(MPI_Request *request)
 {
-#ifdef HAVE_CALIPER
-CALI_CXX_MARK_FUNCTION;
-#endif
     // Test that the request has completed
     int flag = 0;
     mpiTest(request, &flag, MPI_STATUS_IGNORE);
@@ -67,9 +58,6 @@ CALI_CXX_MARK_FUNCTION;
 //----------------------------------------------------------------------------------------------------------------------
 void particle_buffer_base_type::Allocate(int buffer_size)
 {
-#ifdef HAVE_CALIPER
-CALI_CXX_MARK_FUNCTION;
-#endif
     // we add 2 ints: 1 for the number of particles and the second int is so the float_data
     // buffer will be 8 byte aligned
 
@@ -106,9 +94,6 @@ CALI_CXX_MARK_FUNCTION;
 //----------------------------------------------------------------------------------------------------------------------
 void particle_buffer_base_type::Initialize_Buffer()
 {
-#ifdef HAVE_CALIPER
-CALI_CXX_MARK_FUNCTION;
-#endif
     this->num_particles = 0;
     this->length        = 0;
 
@@ -128,9 +113,6 @@ CALI_CXX_MARK_FUNCTION;
 //----------------------------------------------------------------------------------------------------------------------
 void particle_buffer_base_type::Reset_Offsets()
 {
-#ifdef HAVE_CALIPER
-CALI_CXX_MARK_FUNCTION;
-#endif
 
     uint64_t length_int_data   = (MC_Base_Particle::num_base_ints   * num_particles + 2) * (int)sizeof(int);
     uint64_t length_float_data = (MC_Base_Particle::num_base_floats * num_particles    ) * (int)sizeof(double);
@@ -146,9 +128,6 @@ CALI_CXX_MARK_FUNCTION;
 //----------------------------------------------------------------------------------------------------------------------
 void particle_buffer_base_type::Free_Memory()
 {
-#ifdef HAVE_CALIPER
-CALI_CXX_MARK_FUNCTION;
-#endif
     mpiWait(&this->request_list, MPI_STATUS_IGNORE);
 
     MC_FREE(this->int_data);
@@ -165,10 +144,6 @@ CALI_CXX_MARK_FUNCTION;
 //----------------------------------------------------------------------------------------------------------------------
 void mcp_test_done_class::Zero_Out()
 {
-#ifdef HAVE_CALIPER
-CALI_CXX_MARK_FUNCTION;
-#endif
-
     this->local_sent = 0;
     this->local_recv = 0;
 
@@ -191,9 +166,6 @@ CALI_CXX_MARK_FUNCTION;
 //----------------------------------------------------------------------------------------------------------------------
 void mcp_test_done_class::Free_Memory()
 {
-#ifdef HAVE_CALIPER
-CALI_CXX_MARK_FUNCTION;
-#endif
     this->Zero_Out();
 }
 
@@ -202,9 +174,6 @@ CALI_CXX_MARK_FUNCTION;
 //----------------------------------------------------------------------------------------------------------------------
 void mcp_test_done_class::Get_Local_Gains_And_Losses(MonteCarlo *monteCarlo, int64_t sent_recv[2])
 {
-#ifdef HAVE_CALIPER
-CALI_CXX_MARK_FUNCTION;
-#endif
     uint64_t gains = 0, losses = 0;
 
     Balance &bal = monteCarlo->_tallies->_balanceTask[0]; // SumTasks has been called, so just use index 0
@@ -227,9 +196,6 @@ CALI_CXX_MARK_FUNCTION;
 //----------------------------------------------------------------------------------------------------------------------
 void MC_Particle_Buffer::Instantiate()
 {
-#ifdef HAVE_CALIPER
-CALI_CXX_MARK_FUNCTION;
-#endif
     this->test_done.Zero_Out();
 
     MC_NEW_ARRAY(this->task, 1, particle_buffer_task_class);
@@ -263,9 +229,6 @@ CALI_CXX_MARK_FUNCTION;
 //----------------------------------------------------------------------------------------------------------------------
 void MC_Particle_Buffer::Initialize_Map()
 {
-#ifdef HAVE_CALIPER
-CALI_CXX_MARK_FUNCTION;
-#endif
     this->num_buffers = 0;
 
     // Determine number of buffers needed and assign processors to buffers
@@ -293,9 +256,6 @@ CALI_CXX_MARK_FUNCTION;
 //----------------------------------------------------------------------------------------------------------------------
 void MC_Particle_Buffer::Unpack_Particle_Buffer(int buffer_index, uint64_t &fill_vault)
 {
-#ifdef HAVE_CALIPER
-CALI_CXX_MARK_FUNCTION;
-#endif
     MC_Base_Particle base_particle;
 
     int int_index   = 0;
@@ -336,9 +296,6 @@ CALI_CXX_MARK_FUNCTION;
 //----------------------------------------------------------------------------------------------------------------------
 bool MC_Particle_Buffer::Trivially_Done()
 {
-#ifdef HAVE_CALIPER
-CALI_CXX_MARK_FUNCTION;
-#endif
     if (mcco->processor_info->num_processors > 1)
     {
         return false;
@@ -358,9 +315,6 @@ CALI_CXX_MARK_FUNCTION;
 //----------------------------------------------------------------------------------------------------------------------
 void MC_Particle_Buffer::Delete_Completed_Extra_Send_Buffers()
 {
-#ifdef HAVE_CALIPER
-CALI_CXX_MARK_FUNCTION;
-#endif
     std::list<particle_buffer_base_type>::iterator it = this->task[0].extra_send_buffer.begin();
     while ( it != this->task[0].extra_send_buffer.end() )
     {
@@ -388,9 +342,6 @@ CALI_CXX_MARK_FUNCTION;
 //----------------------------------------------------------------------------------------------------------------------
 MC_Particle_Buffer::MC_Particle_Buffer(MonteCarlo *mcco_, size_t bufferSize_)
 {
-#ifdef HAVE_CALIPER
-CALI_CXX_MARK_FUNCTION;
-#endif
     this->mcco  = mcco_;
 #ifdef HAVE_ASYNC_MPI
     this->new_test_done_method = MC_New_Test_Done_Method::NonBlocking;
@@ -412,9 +363,6 @@ CALI_CXX_MARK_FUNCTION;
 //----------------------------------------------------------------------------------------------------------------------
 void MC_Particle_Buffer::Initialize()
 {
-#ifdef HAVE_CALIPER
-CALI_CXX_MARK_FUNCTION;
-#endif
     NVTX_Range range("MC_Particle_Buffer::Initialize");
 
     if (mcco->processor_info->num_processors > 1)
@@ -430,9 +378,6 @@ CALI_CXX_MARK_FUNCTION;
 //----------------------------------------------------------------------------------------------------------------------
 int MC_Particle_Buffer::Choose_Buffer(int processor)
 {
-#ifdef HAVE_CALIPER
-CALI_CXX_MARK_FUNCTION;
-#endif
     int buffer    = this->Get_Processor_Buffer_Index(processor);
 
     if ( buffer < 0 || buffer >= this->num_buffers )
@@ -449,9 +394,6 @@ CALI_CXX_MARK_FUNCTION;
 //----------------------------------------------------------------------------------------------------------------------
 int MC_Particle_Buffer::Get_Processor_Buffer_Index(int processor)
 {
-#ifdef HAVE_CALIPER
-CALI_CXX_MARK_FUNCTION;
-#endif
     std::map<int,int>::iterator it = this->processor_buffer_map.find(processor);
 
     if ( it == this->processor_buffer_map.end() )
@@ -470,9 +412,6 @@ CALI_CXX_MARK_FUNCTION;
 //----------------------------------------------------------------------------------------------------------------------
 void MC_Particle_Buffer::Buffer_Particle(MC_Particle *particle, int buffer)
 {
-#ifdef HAVE_CALIPER
-CALI_CXX_MARK_FUNCTION;
-#endif
     MC_Base_Particle base_particle(*particle);
     this->Buffer_Particle(base_particle, buffer);
 }
@@ -483,9 +422,6 @@ CALI_CXX_MARK_FUNCTION;
 //----------------------------------------------------------------------------------------------------------------------
 void MC_Particle_Buffer::Buffer_Particle(MC_Base_Particle &particle, int buffer)
 {
-#ifdef HAVE_CALIPER
-CALI_CXX_MARK_FUNCTION;
-#endif
     particle_buffer_base_type &send_buffer = this->task[0].send_buffer[buffer];
 
     if (mcco->_params.simulationParams.debugThreads >= 3)
@@ -514,9 +450,6 @@ CALI_CXX_MARK_FUNCTION;
 //----------------------------------------------------------------------------------------------------------------------
 void MC_Particle_Buffer::Allocate_Send_Buffer( SendQueue &sendQueue )
 {
-#ifdef HAVE_CALIPER
-CALI_CXX_MARK_FUNCTION;
-#endif
     for( int buffer = 0; buffer < this->num_buffers; buffer++ )
     {
         particle_buffer_base_type &send_buffer = this->task[0].send_buffer[buffer];
@@ -531,9 +464,6 @@ CALI_CXX_MARK_FUNCTION;
 //----------------------------------------------------------------------------------------------------------------------
 void MC_Particle_Buffer::Send_Particle_Buffers( )
 {
-#ifdef HAVE_CALIPER
-CALI_CXX_MARK_FUNCTION;
-#endif
     for( int buffer_index = 0; buffer_index < this->num_buffers; buffer_index++ )
     {
         Send_Particle_Buffer( buffer_index );
@@ -545,9 +475,6 @@ CALI_CXX_MARK_FUNCTION;
 //----------------------------------------------------------------------------------------------------------------------
 void MC_Particle_Buffer::Send_Particle_Buffer(int buffer)
 {
-#ifdef HAVE_CALIPER
-CALI_CXX_MARK_FUNCTION;
-#endif
     particle_buffer_base_type &send_buffer = this->task[0].send_buffer[buffer];
 
     if( send_buffer.num_particles > 0 )
@@ -580,9 +507,6 @@ CALI_CXX_MARK_FUNCTION;
 //----------------------------------------------------------------------------------------------------------------------
 void MC_Particle_Buffer::Post_Receive_Particle_Buffer( size_t bufferSize_ )
 {
-#ifdef HAVE_CALIPER
-CALI_CXX_MARK_FUNCTION;
-#endif
     for ( int buffer_index = 0; buffer_index < this->num_buffers; buffer_index++ )
     {
         particle_buffer_base_type &recv_buffer = this->task[0].recv_buffer[buffer_index];
@@ -601,9 +525,6 @@ CALI_CXX_MARK_FUNCTION;
 //----------------------------------------------------------------------------------------------------------------------
 void MC_Particle_Buffer::Receive_Particle_Buffers(uint64_t &fill_vault)
 {
-#ifdef HAVE_CALIPER
-CALI_CXX_MARK_FUNCTION;
-#endif
     for ( int buffer_index = 0; buffer_index < this->num_buffers; buffer_index++ )
     {
         particle_buffer_base_type &recv_buffer = this->task[0].recv_buffer[buffer_index];
@@ -629,9 +550,6 @@ CALI_CXX_MARK_FUNCTION;
 //----------------------------------------------------------------------------------------------------------------------
 void MC_Particle_Buffer::Cancel_Receive_Buffer_Requests()
 {
-#ifdef HAVE_CALIPER
-CALI_CXX_MARK_FUNCTION;
-#endif
     for ( int buffer_index = 0; buffer_index < this->num_buffers; buffer_index++ )
     {
         particle_buffer_base_type &recv_buffer = this->task[0].recv_buffer[buffer_index];
@@ -644,9 +562,6 @@ CALI_CXX_MARK_FUNCTION;
 //----------------------------------------------------------------------------------------------------------------------
 bool MC_Particle_Buffer::Test_Done_New( MC_New_Test_Done_Method::Enum test_done_method )
 {
-#ifdef HAVE_CALIPER
-CALI_CXX_MARK_FUNCTION;
-#endif
     if ( !(mcco->processor_info->num_processors > 1 ))
     {
         return this->Trivially_Done();
@@ -684,9 +599,6 @@ CALI_CXX_MARK_FUNCTION;
 //----------------------------------------------------------------------------------------------------------------------
 bool MC_Particle_Buffer::Allreduce_ParticleCounts()
 {
-#ifdef HAVE_CALIPER
-CALI_CXX_MARK_FUNCTION;
-#endif
     int64_t buf[2];
     int64_t hard_blocking_sum[2] = {0, 0};
 
@@ -709,9 +621,6 @@ CALI_CXX_MARK_FUNCTION;
 //----------------------------------------------------------------------------------------------------------------------
 bool MC_Particle_Buffer::Iallreduce_ParticleCounts()
 {
-#ifdef HAVE_CALIPER
-CALI_CXX_MARK_FUNCTION;
-#endif
     // non blocking allreduce request
     int flag = MCP_Test(&this->test_done.IallreduceRequest);
 
@@ -739,9 +648,6 @@ CALI_CXX_MARK_FUNCTION;
 //----------------------------------------------------------------------------------------------------------------------
 void MC_Particle_Buffer::Free_Buffers()
 {
-#ifdef HAVE_CALIPER
-CALI_CXX_MARK_FUNCTION;
-#endif
     for( int buffer = 0; buffer < this->num_buffers; buffer++ )
     {
         particle_buffer_base_type &send_buffer = this->task[0].send_buffer[buffer];
@@ -756,9 +662,6 @@ CALI_CXX_MARK_FUNCTION;
 //----------------------------------------------------------------------------------------------------------------------
 void MC_Particle_Buffer::Free_Memory()
 {
-#ifdef HAVE_CALIPER
-CALI_CXX_MARK_FUNCTION;
-#endif
     MC_VERIFY_THREAD_ZERO;
 
     // Free the send and recv buffers for each task.

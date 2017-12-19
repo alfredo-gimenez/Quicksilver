@@ -1,7 +1,4 @@
 #include "ParticleVault.hh"
-#ifdef HAVE_CALIPER
-#include<caliper/cali.h>
-#endif
 #include "MC_Particle.hh"
 #include "MC_Time_Info.hh"
 #include "DeclareMacro.hh"
@@ -13,9 +10,6 @@
 HOST_DEVICE
 void MC_Load_Particle(MonteCarlo *monteCarlo, MC_Particle &mc_particle, ParticleVault *particleVault, int particle_index)
 {
-#ifdef HAVE_CALIPER
-CALI_CXX_MARK_FUNCTION;
-#endif
     //particleVault.popParticle(mc_particle);
     particleVault->getParticle(mc_particle, particle_index);
 

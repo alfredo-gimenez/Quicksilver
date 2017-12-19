@@ -1,7 +1,4 @@
 #include "GlobalFccGrid.hh"
-#ifdef HAVE_CALIPER
-#include<caliper/cali.h>
-#endif
 #include <algorithm>
 #include <cstdio>
 #include "MC_Vector.hh"
@@ -26,9 +23,6 @@ GlobalFccGrid::GlobalFccGrid(int nx, int ny, int nz,
     _nodeTupleToIndex(nx+1, ny+1, nz+1, 4),
     _nodeIndexToTuple(nx+1, ny+1, nz+1, 4)
 {
-#ifdef HAVE_CALIPER
-CALI_CXX_MARK_FUNCTION;
-#endif
     _dx = _lx/_nx;
     _dy = _ly/_ny;
     _dz = _lz/_nz;
@@ -36,9 +30,6 @@ CALI_CXX_MARK_FUNCTION;
 
 Long64 GlobalFccGrid::whichCell(const MC_Vector& r) const
 {
-#ifdef HAVE_CALIPER
-CALI_CXX_MARK_FUNCTION;
-#endif
     int ix = r.x/_dx;
     int iy = r.y/_dy;
     int iz = r.z/_dz;
@@ -48,9 +39,6 @@ CALI_CXX_MARK_FUNCTION;
 
 MC_Vector GlobalFccGrid::cellCenter(Long64 iCell) const
 {
-#ifdef HAVE_CALIPER
-CALI_CXX_MARK_FUNCTION;
-#endif
     Tuple tt = _cellIndexToTuple(iCell);
     MC_Vector r = nodeCoord(Tuple4(tt.x(), tt.y(), tt.z(), 0) );
     r += MC_Vector(_dx/2., _dy/2., _dz/2.);
@@ -59,9 +47,6 @@ CALI_CXX_MARK_FUNCTION;
 
 const vector<Tuple4>& GlobalFccGrid::cornerTupleOffsets() const
 {
-#ifdef HAVE_CALIPER
-CALI_CXX_MARK_FUNCTION;
-#endif
     static vector<Tuple4> offset;
     if (offset.size() == 0)
     {
@@ -86,9 +71,6 @@ CALI_CXX_MARK_FUNCTION;
 
 void GlobalFccGrid::getNodeGids(Long64 cellGid, vector<Long64>& nodeGid) const
 {
-#ifdef HAVE_CALIPER
-CALI_CXX_MARK_FUNCTION;
-#endif
     if( nodeGid.size() == 0 )
     {
         nodeGid.resize(14);
@@ -105,9 +87,6 @@ CALI_CXX_MARK_FUNCTION;
 // gid will be the same as the input cellGid
 void GlobalFccGrid::getFaceNbrGids(Long64 cellGid, vector<Long64>& nbrCellGid) const
 {
-#ifdef HAVE_CALIPER
-CALI_CXX_MARK_FUNCTION;
-#endif
     if( nbrCellGid.size() == 0 )
     {
         nbrCellGid.resize(6);
@@ -127,17 +106,11 @@ CALI_CXX_MARK_FUNCTION;
 
 MC_Vector GlobalFccGrid::nodeCoord(Long64 index) const
 {
-#ifdef HAVE_CALIPER
-CALI_CXX_MARK_FUNCTION;
-#endif
     return nodeCoord(_nodeIndexToTuple(index));
 }
 
 MC_Vector GlobalFccGrid::nodeCoord(const Tuple4& tt) const
 {
-#ifdef HAVE_CALIPER
-CALI_CXX_MARK_FUNCTION;
-#endif
     vector<MC_Vector> basisOffset;
     basisOffset.reserve(4);
     if (basisOffset.size() == 0)
@@ -159,9 +132,6 @@ CALI_CXX_MARK_FUNCTION;
 
 void GlobalFccGrid::snapTuple(Tuple& tt) const
 {
-#ifdef HAVE_CALIPER
-CALI_CXX_MARK_FUNCTION;
-#endif
     tt.x() = min(max(0, tt.x()), _nx-1);
     tt.y() = min(max(0, tt.y()), _ny-1);
     tt.z() = min(max(0, tt.z()), _nz-1);
@@ -171,9 +141,6 @@ namespace
 {
     const vector<Tuple>& getFaceTupleOffset()
     {
-#ifdef HAVE_CALIPER
-CALI_CXX_MARK_FUNCTION;
-#endif
         static vector<Tuple> faceTupleOffset;
 
         if (faceTupleOffset.size() == 0)

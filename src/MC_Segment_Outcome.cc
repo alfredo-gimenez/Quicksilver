@@ -1,7 +1,4 @@
 #include "MC_Segment_Outcome.hh"
-#ifdef HAVE_CALIPER
-#include<caliper/cali.h>
-#endif
 #include "MC_Nearest_Facet.hh"
 #include "MC_Location.hh"
 #include "MonteCarlo.hh"
@@ -33,9 +30,6 @@ HOST_DEVICE_END
 HOST_DEVICE
 MC_Segment_Outcome_type::Enum MC_Segment_Outcome(MonteCarlo* monteCarlo, MC_Particle &mc_particle, unsigned int &flux_tally_index)
 {
-#ifdef HAVE_CALIPER
-CALI_CXX_MARK_FUNCTION;
-#endif
     // initialize distances to large number
     int number_of_events = 3;
     double distance[3];
@@ -238,9 +232,6 @@ HOST_DEVICE
 static inline unsigned int MC_Find_Min(const double *array,
                                        int num_elements)
 {
-#ifdef HAVE_CALIPER
-CALI_CXX_MARK_FUNCTION;
-#endif
     double min = array[0];
     int min_index = 0;
 

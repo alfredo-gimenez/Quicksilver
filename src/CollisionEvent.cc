@@ -1,7 +1,4 @@
 #include "CollisionEvent.hh"
-#ifdef HAVE_CALIPER
-#include<caliper/cali.h>
-#endif
 #include "MC_Particle.hh"
 #include "NuclearData.hh"
 #include "DirectionCosine.hh"
@@ -27,9 +24,6 @@
 HOST_DEVICE
 void updateTrajectory( double energy, double angle, MC_Particle& particle )
 {
-#ifdef HAVE_CALIPER
-CALI_CXX_MARK_FUNCTION;
-#endif
     particle.kinetic_energy = energy;
     double cosTheta = angle;
     double randomNumber = rngSample(&particle.random_number_seed);
@@ -55,9 +49,6 @@ HOST_DEVICE
 
 bool CollisionEvent(MonteCarlo* monteCarlo, MC_Particle &mc_particle, unsigned int tally_index)
 {
-#ifdef HAVE_CALIPER
-CALI_CXX_MARK_FUNCTION;
-#endif
     const MC_Cell_State &cell = monteCarlo->domain[mc_particle.domain].cell_state[mc_particle.cell];
 
     int globalMatIndex = cell._material;

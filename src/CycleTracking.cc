@@ -1,7 +1,4 @@
 #include "CycleTracking.hh"
-#ifdef HAVE_CALIPER
-#include<caliper/cali.h>
-#endif
 #include "MonteCarlo.hh"
 #include "ParticleVaultContainer.hh"
 #include "ParticleVault.hh"
@@ -17,9 +14,6 @@
 HOST_DEVICE
 void CycleTrackingGuts( MonteCarlo *monteCarlo, int particle_index, ParticleVault *processingVault, ParticleVault *processedVault )
 {
-#ifdef HAVE_CALIPER
-CALI_CXX_MARK_FUNCTION;
-#endif
     MC_Particle mc_particle;
 
     // Copy a single particle from the particle vault into mc_particle
@@ -39,9 +33,6 @@ HOST_DEVICE_END
 HOST_DEVICE
 void CycleTrackingFunction( MonteCarlo *monteCarlo, MC_Particle &mc_particle, int particle_index, ParticleVault* processingVault, ParticleVault* processedVault)
 {
-#ifdef HAVE_CALIPER
-CALI_CXX_MARK_FUNCTION;
-#endif
     bool keepTrackingThisParticle = false;
     unsigned int tally_index =      (particle_index) % monteCarlo->_tallies->GetNumBalanceReplications();
     unsigned int flux_tally_index = (particle_index) % monteCarlo->_tallies->GetNumFluxReplications();

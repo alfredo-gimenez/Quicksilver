@@ -1,7 +1,4 @@
 #include "MC_Base_Particle.hh"
-#ifdef HAVE_CALIPER
-#include<caliper/cali.h>
-#endif
 
 #define MCP_DATA_MEMBER_OLD(member, buffer, index, mode) \
     { if (     mode == MC_Data_Member_Operation::Count )  { (index)++; } \
@@ -23,9 +20,6 @@
 
 void MC_Char8_To_Long(uint64_t *long_out, char char_in[8])
 {
-#ifdef HAVE_CALIPER
-CALI_CXX_MARK_FUNCTION;
-#endif
     *long_out = 0 ;
 
     for (int char_index = 0; char_index < 8; char_index++)
@@ -42,9 +36,6 @@ CALI_CXX_MARK_FUNCTION;
 void MC_Long_To_Char8(const uint64_t *long_in,
                       char char_out[8])
 {
-#ifdef HAVE_CALIPER
-CALI_CXX_MARK_FUNCTION;
-#endif
     uint64_t long_tmp;
     uint64_t mask = 0xffff;
 
@@ -69,9 +60,6 @@ CALI_CXX_MARK_FUNCTION;
 void MC_Base_Particle::Serialize(int *int_data, double *float_data, char *char_data, int &int_index, int &float_index,
                                  int &char_index, MC_Data_Member_Operation::Enum mode)
 {
-#ifdef HAVE_CALIPER
-CALI_CXX_MARK_FUNCTION;
-#endif
     MCP_DATA_MEMBER_OLD(coordinate.x, float_data, float_index, mode);
     MCP_DATA_MEMBER_OLD(coordinate.y, float_data, float_index, mode);
     MCP_DATA_MEMBER_OLD(coordinate.z, float_data, float_index, mode);
@@ -112,9 +100,6 @@ int MC_Base_Particle::num_base_chars = 0;
 //----------------------------------------------------------------------------------------------------------------------
 void MC_Base_Particle::Update_Counts()
 {
-#ifdef HAVE_CALIPER
-CALI_CXX_MARK_FUNCTION;
-#endif
     MC_Base_Particle base_particle;
     num_base_ints = 0;
     num_base_floats = 0;

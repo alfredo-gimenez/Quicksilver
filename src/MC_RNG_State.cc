@@ -1,7 +1,4 @@
 #include "MC_RNG_State.hh"
-#ifdef HAVE_CALIPER
-#include<caliper/cali.h>
-#endif
 #include "DeclareMacro.hh"
 
 //---------------------------------------------------------------------------//
@@ -13,9 +10,6 @@ namespace
     void breakup_uint64( uint64_t uint64_in,
                          uint32_t& front_bits, uint32_t& back_bits )
     {
-#ifdef HAVE_CALIPER
-CALI_CXX_MARK_FUNCTION;
-#endif
         front_bits = static_cast<uint32_t>( uint64_in >> 32 );
         back_bits = static_cast<uint32_t>( uint64_in & 0xffffffff );
     }
@@ -34,9 +28,6 @@ namespace
     HOST_DEVICE
     void pseudo_des( uint32_t& lword, uint32_t& irword )
     {
-#ifdef HAVE_CALIPER
-CALI_CXX_MARK_FUNCTION;
-#endif
         // This random number generator assumes that type uint32_t is a 32 bit int
         // = 1/2 of a 64 bit int. The sizeof operator returns the size in bytes = 8 bits.
 
@@ -71,9 +62,6 @@ namespace
     // Function used to reconstruct  a 64 bit from 2 32 bit ints.
     uint64_t reconstruct_uint64( uint32_t front_bits, uint32_t back_bits )
     {
-#ifdef HAVE_CALIPER
-CALI_CXX_MARK_FUNCTION;
-#endif
         uint64_t reconstructed, temp;
         reconstructed = static_cast<uint64_t>( front_bits );
         temp = static_cast<uint64_t>( back_bits );
@@ -98,9 +86,6 @@ namespace
     // Function used to hash a 64 bit int to get an initial state.
     uint64_t hash_state( uint64_t initial_number )
     {
-#ifdef HAVE_CALIPER
-CALI_CXX_MARK_FUNCTION;
-#endif
         // break initial number apart into 2 32 bit ints
         uint32_t front_bits, back_bits;
         breakup_uint64( initial_number, front_bits, back_bits );
@@ -121,9 +106,6 @@ CALI_CXX_MARK_FUNCTION;
 HOST_DEVICE
 uint64_t rngSpawn_Random_Number_Seed(uint64_t *parent_seed)
 {
-#ifdef HAVE_CALIPER
-CALI_CXX_MARK_FUNCTION;
-#endif
     uint64_t spawned_seed = hash_state(*parent_seed);
     // Bump the parent seed as that is what is expected from the interface.
     rngSample(parent_seed);

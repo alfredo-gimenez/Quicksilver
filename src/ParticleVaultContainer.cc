@@ -1,7 +1,4 @@
 #include "ParticleVaultContainer.hh"
-#ifdef HAVE_CALIPER
-#include<caliper/cali.h>
-#endif
 #include "ParticleVault.hh"
 #include "SendQueue.hh"
 #include "MemoryControl.hh"
@@ -24,10 +21,6 @@ ParticleVaultContainer( uint64_t vault_size,
     _processedVault ( num_vaults       ),
     _extraVault     ( num_extra_vaults, VAR_MEM )
 {
-#ifdef HAVE_CALIPER
-CALI_CXX_MARK_FUNCTION;
-#endif
-
     //Allocate and reserve space for particles for each vault
     for( uint64_t vault = 0; vault < num_vaults; vault++ )
     {
@@ -65,9 +58,6 @@ CALI_CXX_MARK_FUNCTION;
 ParticleVaultContainer::
 ~ParticleVaultContainer()
 {
-#ifdef HAVE_CALIPER
-CALI_CXX_MARK_FUNCTION;
-#endif
     for( int64_t ii = _processingVault.size()-1; ii >= 0; ii-- )
     {
         MemoryControl::deallocate(_processingVault[ii], 1, VAR_MEM);
@@ -92,9 +82,6 @@ CALI_CXX_MARK_FUNCTION;
 ParticleVault* ParticleVaultContainer::
 getTaskProcessingVault(uint64_t vaultIndex)
 {
-#ifdef HAVE_CALIPER
-CALI_CXX_MARK_FUNCTION;
-#endif
 //   qs_assert(vaultIndex >= 0);
 //   qs_assert(vaultIndex < _processingVault.size());
     return _processingVault[vaultIndex];
@@ -109,9 +96,6 @@ CALI_CXX_MARK_FUNCTION;
 ParticleVault* ParticleVaultContainer::
 getTaskProcessedVault(uint64_t vaultIndex)
 {
-#ifdef HAVE_CALIPER
-CALI_CXX_MARK_FUNCTION;
-#endif
 //   qs_assert(vaultIndex >= 0);
 //   qs_assert(vaultIndex < _processedVault.size());
     return _processedVault[vaultIndex];
@@ -126,9 +110,6 @@ CALI_CXX_MARK_FUNCTION;
 uint64_t ParticleVaultContainer::
 getFirstEmptyProcessedVault()
 {
-#ifdef HAVE_CALIPER
-CALI_CXX_MARK_FUNCTION;
-#endif
     uint64_t index = 0;
 
     while( _processedVault[index]->size() != 0 )
@@ -153,9 +134,6 @@ HOST_DEVICE
 SendQueue* ParticleVaultContainer::
 getSendQueue()
 {
-#ifdef HAVE_CALIPER
-CALI_CXX_MARK_FUNCTION;
-#endif
     return this->_sendQueue;
 }
 HOST_DEVICE_END
@@ -168,9 +146,6 @@ HOST_DEVICE_END
 uint64_t ParticleVaultContainer::
 sizeProcessing()
 {
-#ifdef HAVE_CALIPER
-CALI_CXX_MARK_FUNCTION;
-#endif
     uint64_t sum_size = 0;
     for( uint64_t vault = 0; vault < _processingVault.size(); vault++ )
     {
@@ -187,9 +162,6 @@ CALI_CXX_MARK_FUNCTION;
 uint64_t ParticleVaultContainer::
 sizeProcessed()
 {
-#ifdef HAVE_CALIPER
-CALI_CXX_MARK_FUNCTION;
-#endif
     uint64_t sum_size = 0;
     for( uint64_t vault = 0; vault < _processedVault.size(); vault++ )
     {
@@ -207,9 +179,6 @@ CALI_CXX_MARK_FUNCTION;
 uint64_t ParticleVaultContainer::
 sizeExtra()
 {
-#ifdef HAVE_CALIPER
-CALI_CXX_MARK_FUNCTION;
-#endif
     uint64_t sum_size = 0;
     for( uint64_t vault = 0; vault < _extraVault.size(); vault++ )
     {
@@ -227,9 +196,6 @@ CALI_CXX_MARK_FUNCTION;
 void ParticleVaultContainer::
 collapseProcessing()
 {
-#ifdef HAVE_CALIPER
-CALI_CXX_MARK_FUNCTION;
-#endif
     uint64_t size_processing = this->sizeProcessing();
 
     uint64_t num_vaults = this->_processingVault.size();
@@ -268,9 +234,6 @@ CALI_CXX_MARK_FUNCTION;
 void ParticleVaultContainer::
 collapseProcessed()
 {
-#ifdef HAVE_CALIPER
-CALI_CXX_MARK_FUNCTION;
-#endif
     uint64_t size_processed = this->sizeProcessed();
 
     uint64_t num_vaults = this->_processedVault.size();
@@ -314,9 +277,6 @@ CALI_CXX_MARK_FUNCTION;
 void ParticleVaultContainer::
 swapProcessingProcessedVaults()
 {
-#ifdef HAVE_CALIPER
-CALI_CXX_MARK_FUNCTION;
-#endif
     //Collapse Processed Vault to insure the particles are all
     //in the front of the list
     this->collapseProcessed();
@@ -357,9 +317,6 @@ CALI_CXX_MARK_FUNCTION;
 void ParticleVaultContainer::
 addProcessingParticle( MC_Base_Particle &particle, uint64_t &fill_vault_index )
 {
-#ifdef HAVE_CALIPER
-CALI_CXX_MARK_FUNCTION;
-#endif
     bool space = ( _processingVault[fill_vault_index]->size() < this->_vaultSize );
     while( !space )
     {
@@ -383,9 +340,6 @@ HOST_DEVICE
 void ParticleVaultContainer::
 addExtraParticle( MC_Particle &particle)
 {
-#ifdef HAVE_CALIPER
-CALI_CXX_MARK_FUNCTION;
-#endif
     uint64_cu index = 0;
     ATOMIC_CAPTURE( this->_extraVaultIndex, 1, index );
     uint64_t vault = index / this->_vaultSize;
@@ -402,9 +356,6 @@ HOST_DEVICE_END
 void ParticleVaultContainer::
 cleanExtraVaults()
 {
-#ifdef HAVE_CALIPER
-CALI_CXX_MARK_FUNCTION;
-#endif
     uint64_t size_extra = this->sizeExtra();
     if( size_extra > 0 )
     {
